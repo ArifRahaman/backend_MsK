@@ -7,7 +7,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 dotenv.config();
 const corsOptions = {
-  origin: 'https://backend-msk.onrender.com', // Allow only this origin
+  origin: 'https://frontend-msk.vercel.app/', // Allow only this origin
   credentials: true             // Enable cookies sharing if needed
 };
 
