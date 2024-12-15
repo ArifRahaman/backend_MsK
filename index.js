@@ -6,9 +6,15 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 dotenv.config();
+const corsOptions = {
+  origin: 'https://frontend-fowcr1mu3-arifs-projects-7afc6355.vercel.app/', // Allow only this origin
+  credentials: true             // Enable cookies sharing if needed
+};
 
+// Use the CORS middleware with options
+app.use(cors(corsOptions));
 const app = express();
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
