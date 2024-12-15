@@ -12,7 +12,7 @@ dotenv.config();
 
 const app = express();
 const corsOptions = {
-  origin: 'https://frontend-msk.vercel.app/', // Allow only this origin
+  origin: 'https://frontend-msk.vercel.app', // Allow only this origin
   credentials: true             // Enable cookies sharing if needed
 };
 app.use(cors(corsOptions));
