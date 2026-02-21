@@ -216,7 +216,7 @@ def chat(query: str):
         "strategy": "Ensemble Consensus (Basic + Hierarchical + Rerank)",
         "answer": final_answer
     }
-##
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
