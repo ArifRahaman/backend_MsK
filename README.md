@@ -1,28 +1,25 @@
-# Image Masking Backend Service
+# Ensemble RAG (3-Model Consensus) Backend Service
 
-This repository houses the backend service for an image masking application. It is engineered to handle the secure upload, storage, and management of original and masked images. Utilizing robust cloud services, it ensures efficient asset handling and provides a clear API for integration with client applications.
+This repository hosts a robust backend service for a Retrieval Augmented Generation (RAG) system, engineered to ingest and process various document types using an ensemble of three AI models. It facilitates the secure upload, text extraction, and background processing of documents, making the content available for advanced querying and generation tasks through its integrated RAG logic.
 
 ## Features
 
-*   **Image Uploads**: Securely handles the upload of two distinct image files—an original image and its corresponding mask image—in a single request.
-*   **Cloudinary Integration**: Leverages Cloudinary for highly efficient, scalable, and secure cloud storage of all uploaded image files. Images are stored in a dedicated folder (`image_mask_tool`) and support `jpeg` and `png` formats.
-*   **MongoDB Persistence**: Stores essential image metadata, including the Cloudinary URLs for both the original and masked images, in a MongoDB database using Mongoose for structured data management. Each record also includes an `uploadedAt` timestamp.
-*   **CORS Configuration**: Securely configured using the `cors` middleware to accept requests exclusively from a specified frontend application origin, enhancing security and controlling access.
-*   **Robust API Endpoint**: Provides a clear and simple `POST /upload` API endpoint designed specifically for handling the multi-file image upload operation.
-*   **Environment Variable Management**: Utilizes `dotenv` to manage sensitive configurations and credentials, keeping them out of the codebase and making deployment flexible.
+*   **Document Ingestion**: Supports secure upload and processing of multiple document types, including PDF, TXT, Markdown, and JSON files.
+*   **Intelligent Text Extraction**: Implements a dedicated helper to efficiently extract textual content from uploaded documents, handling different file formats robustly.
+*   **Ensemble RAG Logic**: Integrates a sophisticated 3-model consensus RAG system (defined in `rag_logic.py`) for enhanced information retrieval and generation, leveraging multiple perspectives for improved accuracy and reliability.
+*   **Asynchronous Processing**: Utilizes FastAPI's `BackgroundTasks` to handle computationally intensive text extraction and ingestion processes asynchronously, ensuring the API remains responsive.
+*   **File Management**: Organizes uploaded files into a dedicated `uploads/` directory for temporary storage before processing, with robust error handling and cleanup mechanisms.
+*   **Environment Variable Management**: Employs `python-dotenv` for secure and flexible management of sensitive configurations and API keys, separating them from the codebase.
+*   **Structured Logging**: Incorporates comprehensive logging to monitor application behavior, track file processing, and aid in debugging.
 
 ## Tech Stack
 
-*   **Node.js**: JavaScript runtime environment.
-*   **Express.js**: Fast, unopinionated, minimalist web framework for Node.js.
-*   **MongoDB**: NoSQL database for flexible and scalable data storage.
-*   **Mongoose**: MongoDB object data modeling (ODM) for Node.js, providing a schema-based solution for application data.
-*   **Cloudinary**: Cloud-based image and video management service for storing and delivering media.
-*   **Multer**: Node.js middleware for handling `multipart/form-data`, primarily used for parsing and processing file uploads.
-*   **Multer Storage Cloudinary**: A Multer storage engine that directly uploads files to Cloudinary, streamlining the upload process.
-*   **dotenv**: Module to load environment variables from a `.env` file, ensuring sensitive configurations are kept secure and separate from the codebase.
-*   **CORS**: Node.js middleware for providing a Connect/Express middleware that can be used to enable Cross-Origin Resource Sharing with fine-grained control over allowed origins.
-*   **Nodemon**: (Development dependency) A utility that monitors for any changes in your source and automatically restarts your server, ideal for speeding up development workflows.
+*   **Python**: The core programming language for the backend.
+*   **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints.
+*   **pypdf**: A pure-python PDF library capable of splitting, merging, cropping, and transforming PDF pages, and extracting text.
+*   **python-dotenv**: A module that loads environment variables from a `.env` file into `os.environ`.
+*   **Uvicorn**: An ASGI server, used to run FastAPI applications.
+*   **`rag_logic.py`**: (External module) Houses the custom 3-model ensemble RAG implementation, responsible for embedding, retrieval, and generation based on ingested documents. This module is imported and utilized by `index.js` but its internal details are not provided in this context.
 
 ## Installation Instructions
 
@@ -34,169 +31,150 @@ Follow these steps to set up and run the backend service locally:
     cd backend_MsK
     ```
 
-2.  **Install dependencies:**
+2.  **Create a virtual environment (recommended):**
     ```bash
-    npm install
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
     ```
 
-3.  **Create a `.env` file:**
+3.  **Install dependencies:**
+    The project relies on a `requirements.txt` file for its dependencies.
+    ```bash
+    pip install -r requirements.txt
+    ```
+    *If `requirements.txt` is not yet available in the repository, you can create one manually with the following core dependencies, then run the install command:*
+    ```
+    fastapi
+    uvicorn
+    python-dotenv
+    pypdf
+    ```
+    *Note: The `rag_logic.py` module may have additional dependencies (e.g., for NLP models, vector databases, or API clients) not listed here. You may need to install them separately if they are not included in a comprehensive `requirements.txt`.*
+
+4.  **Create a `.env` file:**
     In the root directory of the project, create a file named `.env` and configure your environment variables. Refer to the [Environment Variables](#environment-variables) section for detailed information.
 
     Example `.env` structure:
     ```ini
-    PORT=5000
-    MONGO_URI="mongodb+srv://<user>:<password>@<cluster-url>/<dbname>?retryWrites=true&w=majority"
-    CLOUDINARY_CLOUD_NAME="your_cloudinary_cloud_name"
-    CLOUDINARY_API_KEY="your_cloudinary_api_key"
-    CLOUDINARY_API_SECRET="your_cloudinary_api_secret"
-    FRONTEND_ORIGIN="https://frontend-msk.vercel.app" # Or your specific frontend URL, e.g., http://localhost:3000
+    # Server configuration
+    PORT=8000
+    HOST="0.0.0.0"
+
+    # RAG specific configurations (adjust based on your rag_logic.py implementation)
+    # Example: If your RAG system uses OpenAI
+    # OPENAI_API_KEY="your_openai_api_key"
+    # VECTOR_DB_URI="your_vector_database_connection_string"
+    # MODEL_NAME="gpt-4o" # Or other model identifiers
+    # UPLOAD_DIRECTORY="uploads" # Optional, code defaults to 'uploads' if not set
     ```
 
-4.  **Start the server:**
-    *   For **development** (with automatic restarts on file changes):
-        ```bash
-        npm run dev
-        # or
-        nodemon index.js
-        ```
-    *   For **production**:
-        ```bash
-        npm start
-        # or
-        node index.js
-        ```
+5.  **Start the server:**
+    ```bash
+    uvicorn index:app --host 0.0.0.0 --port 8000 --reload
+    ```
+    The `--reload` flag is useful for development as it automatically restarts the server on code changes. For production, consider removing `--reload` for better performance and stability.
 
-    You should see "MongoDB connected" in your console, and the server will be listening on the specified `PORT`.
+    The API will be accessible at `http://127.0.0.1:8000` (or the specified host/port).
+    You can access the interactive API documentation (Swagger UI) at `http://127.0.0.1:8000/docs`.
 
 ## Usage Guide
 
-This backend service primarily exposes an API endpoint for uploading images. A client application (e.g., a web frontend) can send `multipart/form-data` requests to this endpoint.
+This service primarily provides an API endpoint for ingesting documents into the RAG system.
 
-### Uploading Images
+### Ingesting Documents
 
-To upload an original image and its corresponding mask image, send a `POST` request to the `/upload` endpoint with `Content-Type: multipart/form-data`. The request body must contain two file fields: `original` and `mask`.
+To add new documents for processing by the RAG system, send a `POST` request to the `/ingest-document` endpoint. The service will handle the file upload, extract text, and schedule the document for background processing through the ensemble RAG logic.
 
-#### Example using `curl`
-
-You can test the upload functionality using `curl` from your terminal. Replace `path/to/original.jpg` and `path/to/mask.png` with the actual paths to your image files.
+#### Example using `curl`:
 
 ```bash
-curl -X POST \
-  http://localhost:5000/upload \
-  -H 'Content-Type: multipart/form-data' \
-  -F 'original=@/path/to/original.jpg' \
-  -F 'mask=@/path/to/mask.png'
+curl -X POST "http://127.0.0.1:8000/ingest-document" \
+     -H "accept: application/json" \
+     -H "Content-Type: multipart/form-data" \
+     -F "file=@/path/to/your/document.pdf;type=application/pdf"
 ```
 
-#### Example using JavaScript (Frontend Application)
+Replace `/path/to/your/document.pdf` with the actual file path of your document. The API supports `pdf`, `txt`, `md`, and `json` file formats.
 
-This is a conceptual example for how a frontend application might use the API.
+#### Expected Response:
 
-```javascript
-const uploadImages = async (originalFile, maskFile) => {
-  const formData = new FormData();
-  formData.append('original', originalFile);
-  formData.append('mask', maskFile);
+A successful ingestion request will return a confirmation message indicating that the document has been received and scheduled for processing.
 
-  try {
-    const response = await fetch('http://localhost:5000/upload', { // Replace with your backend URL
-      method: 'POST',
-      body: formData,
-      // No need to set Content-Type header for FormData, fetch does it automatically
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to upload images');
-    }
-
-    const data = await response.json();
-    console.log('Images uploaded successfully:', data);
-    return data;
-  } catch (error) {
-    console.error('Upload error:', error.message);
-    throw error;
-  }
-};
-
-// Example usage (assuming you have file objects from an input field)
-// const originalImageFile = document.querySelector('#originalFileInput').files[0];
-// const maskImageFile = document.querySelector('#maskFileInput').files[0];
-// if (originalImageFile && maskImageFile) {
-//   uploadImages(originalImageFile, maskImageFile);
-// }
+```json
+{
+  "message": "Document uploaded and scheduled for ingestion.",
+  "filename": "your_document.pdf"
+}
 ```
+
+The actual ingestion process (text extraction, feeding data to the RAG logic) runs as a background task. You should monitor the server logs for detailed status updates and any potential errors during this background operation.
+
+*Further usage (e.g., querying the RAG system, retrieving generated responses) would typically involve additional API endpoints not detailed in the provided `index.js` excerpt. These would likely be implemented within or alongside the `rag_logic.py` module.*
 
 ## Environment Variables
 
-The project uses a `.env` file to manage environment-specific configurations. Make sure to create this file in the root directory and populate it with the following variables:
+The project uses `python-dotenv` to load environment variables from a `.env` file. Create this file in the root directory of your project to configure various aspects of the application.
 
-*   **`PORT`**: The port number on which the Express server will run.
-    *   _Example:_ `PORT=5000`
-*   **`MONGO_URI`**: Your MongoDB connection string. This includes credentials and the database name.
-    *   _Example:_ `MONGO_URI="mongodb+srv://user:password@cluster-url/dbname?retryWrites=true&w=majority"`
-*   **`CLOUDINARY_CLOUD_NAME`**: Your Cloudinary cloud name.
-    *   _Example:_ `CLOUDINARY_CLOUD_NAME="your_cloudinary_cloud_name"`
-*   **`CLOUDINARY_API_KEY`**: Your Cloudinary API key.
-    *   _Example:_ `CLOUDINARY_API_KEY="your_cloudinary_api_key"`
-*   **`CLOUDINARY_API_SECRET`**: Your Cloudinary API secret.
-    *   _Example:_ `CLOUDINARY_API_SECRET="your_cloudinary_api_secret"`
-*   **`FRONTEND_ORIGIN`**: The URL of your frontend application that is allowed to make requests to this backend. This is crucial for CORS security.
-    *   _Example:_ `FRONTEND_ORIGIN="https://frontend-msk.vercel.app"` or `http://localhost:3000` for local development.
+*   **`PORT`**: (Optional) Specifies the port on which the FastAPI server will listen for incoming requests. Defaults to `8000` if not explicitly set.
+*   **`HOST`**: (Optional) Defines the host address for the FastAPI server. Defaults to `0.0.0.0`, making the server accessible from any network interface. Use `127.0.0.1` to restrict access to the local machine only.
+*   **`UPLOAD_DIR`**: (Optional) The directory where uploaded documents are temporarily stored before processing. The current `index.js` hardcodes this to `uploads/`, but including it here provides a clear configuration point if it were to be made dynamic.
+
+**RAG-specific variables (dependent on `rag_logic.py`):**
+
+Your `rag_logic.py` module will almost certainly require additional environment variables for its configuration. These might include API keys for external Language Models (LLMs), connection strings for vector databases, or paths to locally stored models. Examples of such variables often include:
+
+*   **`OPENAI_API_KEY`**: API key for integrating with OpenAI services.
+*   **`HF_TOKEN`**: Hugging Face API token for accessing models from the Hugging Face Hub.
+*   **`VECTOR_DB_CONNECTION_STRING`**: Connection details for your chosen vector database (e.g., Pinecone, Weaviate, ChromaDB, Milvus).
+*   **`EMBEDDING_MODEL_NAME`**: Identifier or path for the embedding model used in the RAG pipeline.
+*   **`GENERATION_MODEL_NAME`**: Identifier or path for the generative model used to produce responses.
 
 ## API Reference
 
-### Upload Images
+The primary API endpoint for interacting with the document ingestion service is described below. For full details and interactive testing, refer to the automatically generated OpenAPI documentation available at `/docs` when the server is running.
 
-**Endpoint**: `/upload`
-**Method**: `POST`
-**Description**: Uploads an original image and a corresponding mask image to Cloudinary and stores their URLs in MongoDB.
-**Content-Type**: `multipart/form-data`
+### `POST /ingest-document`
 
-#### Request Body
+Uploads a document file to the backend service for text extraction and subsequent ingestion into the ensemble RAG system.
 
-The request body must be `multipart/form-data` and contain two file fields:
-
-*   **`original`**: The original image file.
-*   **`mask`**: The mask image file.
-
-#### Success Response
-
-**Status**: `200 OK`
-**Body**:
-```json
-{
-  "message": "Images uploaded successfully",
-  "originalImageUrl": "https://res.cloudinary.com/.../original_image.jpeg",
-  "maskImageUrl": "https://res.cloudinary.com/.../mask_image.png",
-  "imageId": "65e6d7a4c7b8e9f0g1h2i3j4" // MongoDB _id of the saved record
-}
-```
-
-#### Error Response
-
-**Status**: `500 Internal Server Error`
-**Body**:
-```json
-{
-  "message": "Error uploading images",
-  "error": "Details about the error (e.g., database error, upload failure)"
-}
-```
+*   **Method**: `POST`
+*   **URL**: `/ingest-document`
+*   **Request Body**: `multipart/form-data`
+    *   **`file`** (File, Required): The document file to be uploaded. Supported formats include `.pdf`, `.txt`, `.md`, and `.json`.
+*   **Responses**:
+    *   **`200 OK`**: Document successfully uploaded and scheduled for background processing.
+        ```json
+        {
+          "message": "Document uploaded and scheduled for ingestion.",
+          "filename": "example.pdf"
+        }
+        ```
+    *   **`400 Bad Request`**: Indicates an issue with the request, such as no file being provided or an unsupported file type.
+    *   **`500 Internal Server Error`**: Signifies a server-side error during file handling, text extraction, or background task scheduling.
 
 ## Contributing
 
-Contributions are welcome! If you have suggestions for improvements, new features, or bug fixes, please follow these steps:
+Contributions to this project are welcome! If you'd like to contribute, please follow these guidelines:
 
-1.  Fork the repository.
-2.  Create a new branch (`git checkout -b feature/your-feature-name`).
-3.  Make your changes.
-4.  Commit your changes (`git commit -m 'Add new feature'`).
-5.  Push to the branch (`git push origin feature/your-feature-name`).
-6.  Open a Pull Request.
+1.  **Fork the repository:** Start by forking the `ArifRahaman/backend_MsK` repository to your GitHub account.
+2.  **Create a new branch:** For each feature or bug fix, create a dedicated branch from `main`:
+    ```bash
+    git checkout -b feature/your-feature-name
+    ```
+    (e.g., `feature/add-new-file-type` or `bugfix/fix-pdf-parsing`)
+3.  **Make your changes:** Implement your feature or fix the bug.
+4.  **Commit your changes:** Write clear and concise commit messages.
+    ```bash
+    git commit -m 'feat: Add support for DOCX file type'
+    ```
+5.  **Push to the branch:** Upload your local branch to your forked repository:
+    ```bash
+    git push origin feature/your-feature-name
+    ```
+6.  **Open a Pull Request (PR):** Navigate to the original repository on GitHub and open a pull request from your new branch to the `main` branch. Provide a detailed description of your changes.
 
-Please ensure your code adheres to the existing style and includes relevant documentation updates.
+Please ensure your code adheres to existing style guidelines, includes appropriate tests, and passes all existing checks before submitting a PR.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. A copy of the license can be found in the `LICENSE` file within this repository.
