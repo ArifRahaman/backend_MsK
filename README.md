@@ -1,6 +1,6 @@
 # Ensemble RAG (3-Model Consensus) Backend Service
 
-This repository hosts the backend service for an Ensemble RAG (Retrieval Augmented Generation) system, designed for processing and ingesting various document types (PDF, TXT, MD, JSON). It facilitates a 3-Model Consensus approach for robust information retrieval. The service allows users to upload documents, extracts their text content, and integrates this content into a RAG pipeline for advanced querying and knowledge synthesis.
+This repository hosts the backend service for an Ensemble RAG (Retrieval Augmented Generation) system. It is specifically designed for processing and ingesting various document types (PDF, TXT, MD, JSON) to facilitate a 3-Model Consensus approach for robust information retrieval and knowledge synthesis. The service allows users to securely upload documents, extracts their text content, and seamlessly integrates this content into a RAG pipeline for advanced querying.
 
 ## Features
 
@@ -22,7 +22,7 @@ This repository hosts the backend service for an Ensemble RAG (Retrieval Augment
 *   **`python-dotenv`**: A zero-dependency module that loads environment variables from a `.env` file into `os.environ`.
 *   **`logging`**: Python's built-in module for emitting log messages throughout the application.
 *   **`pathlib`**: Python's object-oriented filesystem paths module, used for handling file paths efficiently.
-*   **`rag_logic`**: (Assumed custom module) The core logic implementation for the 3-Model Ensemble RAG system, responsible for processing extracted text and integrating it into the retrieval augmented generation pipeline.
+*   **`rag_logic`**: (Custom module) The core logic implementation for the 3-Model Ensemble RAG system, responsible for processing extracted text and integrating it into the retrieval augmented generation pipeline.
 
 ## Installation Instructions
 
@@ -41,156 +41,132 @@ Follow these steps to set up and run the backend service locally:
     ```
 
 3.  **Install dependencies:**
-    This project uses `pip` to manage its dependencies. It is recommended to create a `requirements.txt` file if not already present.
+    This project uses `pip` to manage its dependencies. It's recommended to create a `requirements.txt` file.
 
-    If `requirements.txt` exists:
+    Create a `requirements.txt` file in the root of the project with the following content:
+    ```
+    fastapi
+    uvicorn
+    python-dotenv
+    pypdf
+    ```
+    Then install them:
     ```bash
     pip install -r requirements.txt
     ```
-
-    If `requirements.txt` is missing, you can install the dependencies manually and then generate the file:
-    ```bash
-    pip install fastapi uvicorn python-dotenv pypdf
-    pip freeze > requirements.txt # Optional: to create a requirements file
-    ```
+    *(Note: The `rag_logic` module is assumed to be part of this project or provided separately, and any external dependencies it has should also be added to `requirements.txt` if applicable.)*
 
 4.  **Create a `.env` file:**
     In the root directory of the project, create a file named `.env` and configure your environment variables. Refer to the [Environment Variables](#environment-variables) section for detailed information.
 
-    Example `.env` structure:
-    ```ini
-    PORT=8000
-    # Add any other environment variables required by rag_logic, e.g.,
-    # OPENAI_API_KEY=your_openai_api_key
-    # HUGGINGFACE_API_TOKEN=your_hf_token
-    # RAG_MODEL_PATH=/path/to/your/model
-    ```
-
 ## Usage Guide
 
-### 1. Start the Backend Service
+### Starting the Backend Service
 
-Navigate to the project's root directory and run the FastAPI application using Uvicorn:
-
-```bash
-uvicorn index:app --host 0.0.0.0 --port ${PORT:-8000} --reload
-```
-The `--reload` flag is useful for development as it automatically reloads the server on code changes. For production, you might omit it.
-The `PORT` variable will be loaded from your `.env` file, defaulting to `8000` if not specified.
-
-The application will be accessible at `http://localhost:${PORT}` (e.g., `http://localhost:8000`).
-
-### 2. Upload Documents
-
-You can upload documents using the `/uploadfile/` API endpoint.
-
-#### Example using `curl`:
-
-To upload a PDF file named `document.pdf`:
+To start the FastAPI application using Uvicorn, navigate to the project's root directory in your activated virtual environment and run:
 
 ```bash
-curl -X POST "http://localhost:8000/uploadfile/" \
-  -H "accept: application/json" \
-  -H "Content-Type: multipart/form-data" \
-  -F "file=@/path/to/your/document.pdf;type=application/pdf"
+uvicorn index:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-To upload a text file named `notes.txt`:
+*   `index:app`: Specifies that the FastAPI application instance named `app` is found within the `index.py` file.
+*   `--host 0.0.0.0`: Makes the server accessible from any IP address (useful for Docker or network access). For local-only access, you can use `127.0.0.1` or `localhost`.
+*   `--port 8000`: Runs the server on port 8000.
+*   `--reload`: Enables auto-reloading of the server on code changes during development.
 
+Once the server is running, you can access the API documentation at `http://localhost:8000/docs` (Swagger UI) or `http://localhost:8000/redoc` (ReDoc).
+
+### Uploading Documents for Ingestion
+
+You can upload documents to the `/uploadfile/` endpoint using tools like `curl` or any HTTP client library.
+
+**Example using `curl` (Linux/macOS):**
+
+To upload a PDF file:
 ```bash
 curl -X POST "http://localhost:8000/uploadfile/" \
-  -H "accept: application/json" \
-  -H "Content-Type: multipart/form-data" \
-  -F "file=@/path/to/your/notes.txt;type=text/plain"
+     -H "accept: application/json" \
+     -H "Content-Type: multipart/form-data" \
+     -F "file=@/path/to/your/document.pdf;type=application/pdf"
 ```
 
-#### Example using Python `requests`:
-
-```python
-import requests
-
-# Assuming the backend is running on port 8000
-BASE_URL = "http://localhost:8000"
-
-def upload_document(file_path):
-    try:
-        with open(file_path, "rb") as f:
-            files = {"file": (f.name, f, "application/octet-stream")}
-            response = requests.post(f"{BASE_URL}/uploadfile/", files=files)
-            response.raise_for_status()  # Raise an exception for HTTP errors
-            print(f"Successfully uploaded {file_path}: {response.json()}")
-    except requests.exceptions.RequestException as e:
-        print(f"Error uploading {file_path}: {e}")
-
-# Example usage:
-upload_document("path/to/your/document.pdf")
-upload_document("path/to/your/example.md")
+To upload a TXT file:
+```bash
+curl -X POST "http://localhost:8000/uploadfile/" \
+     -H "accept: application/json" \
+     -H "Content-Type: multipart/form-data" \
+     -F "file=@/path/to/your/document.txt;type=text/plain"
 ```
 
-Upon successful upload, the server will respond with a message indicating that the file has been queued for ingestion. The text extraction and RAG ingestion will then proceed in the background.
+Replace `/path/to/your/document.pdf` or `/path/to/your/document.txt` with the actual path to your file.
+
+**Expected Response:**
+
+Upon successful upload and initiation of the background ingestion task, you will receive a JSON response:
+
+```json
+{
+  "message": "File uploaded successfully and ingestion initiated."
+}
+```
+
+The server will then process the file in the background, extracting text and feeding it to the `rag_logic` module. You can monitor the server logs for progress and any potential issues.
 
 ## Environment Variables
 
-This project uses `python-dotenv` to load configuration from a `.env` file. Create a `.env` file in the root directory of your project.
+The project uses `python-dotenv` to manage environment variables from a `.env` file. These variables are crucial for configuring various aspects of the application, especially for the `rag_logic` module, which might require API keys, model identifiers, or connection strings.
 
-*   **`PORT`**: The port number on which the FastAPI application will run.
-    *   Example: `PORT=8000`
+Create a file named `.env` in the root directory of your project (e.g., `backend_MsK/.env`).
 
-*   **RAG-specific variables**: Your `rag_logic` module might require additional environment variables, such as API keys for external services or paths to models. These should also be defined in your `.env` file.
-    *   Example:
-        ```ini
-        OPENAI_API_KEY=sk-your_openai_api_key_here
-        HUGGINGFACE_API_TOKEN=hf_your_huggingface_token_here
-        EMBEDDING_MODEL_NAME=sentence-transformers/all-MiniLM-L6-v2
-        ```
-    Consult the documentation or source code of your `rag_logic` module for a complete list of required variables.
+**Example `.env` structure (add variables as required by `rag_logic`):**
+
+```env
+# Example environment variables (adjust based on actual needs of rag_logic)
+# OPENAI_API_KEY="your_openai_api_key_here"
+# HUGGINGFACE_API_TOKEN="your_huggingface_token_here"
+# VECTOR_DB_URL="your_vector_database_connection_string"
+# MODEL_NAME_1="model-a"
+# MODEL_NAME_2="model-b"
+# MODEL_NAME_3="model-c"
+```
+*Note: The specific environment variables required will depend on the implementation details of the `rag_logic` module, which is not fully exposed in these excerpts. Consult the `rag_logic` module's documentation or source code for exact requirements.*
 
 ## API Reference
-
-The backend service exposes a single primary endpoint for document ingestion.
 
 ### `POST /uploadfile/`
 
 Uploads a document for text extraction and subsequent ingestion into the Ensemble RAG pipeline.
 
-*   **Method**: `POST`
 *   **URL**: `/uploadfile/`
-*   **Request Body**: `multipart/form-data`
-    *   **`file`** (`File`): The document file to be uploaded. Supported types include PDF, TXT, MD, and JSON.
+*   **Method**: `POST`
+*   **Headers**:
+    *   `Content-Type: multipart/form-data`
+*   **Parameters**:
+    *   `file`: (`UploadFile`, **required**) The document to be uploaded. Supported types include PDF, TXT, MD, and JSON.
 *   **Responses**:
     *   **`200 OK`**:
         ```json
         {
-          "message": "File 'document.pdf' uploaded successfully and queued for ingestion."
+          "message": "File uploaded successfully and ingestion initiated."
         }
         ```
-        Returned when the file is successfully received and the background ingestion task is initiated.
+        *Description*: Indicates that the file was received and a background task for text extraction and RAG ingestion has been successfully started.
     *   **`400 Bad Request`**:
-        ```json
-        {
-          "detail": "No file uploaded."
-        }
-        ```
-        Returned if no file is provided in the request.
+        *Description*: Returned if the uploaded file is malformed, or if other client-side validation errors occur (e.g., if FastAPI's internal validation fails before custom logic is applied).
     *   **`500 Internal Server Error`**:
-        ```json
-        {
-          "detail": "Failed to upload or process file: [error description]"
-        }
-        ```
-        Returned if there's an error during file saving or during the initial queuing of the background task.
+        *Description*: Returned if an unexpected server-side error occurs during file handling, text extraction, or the RAG ingestion process. (While the current implementation logs warnings for unsupported file types, a production-ready API might explicitly raise a `HTTPException` for such cases, resulting in a 400 response.)
 
 ## Contributing
 
-Contributions are welcome! If you find a bug, have a feature request, or want to contribute code, please follow these steps:
+We welcome contributions to enhance this Ensemble RAG backend service! If you're interested in improving the project, please follow these steps:
 
-1.  Fork the repository.
-2.  Create a new branch (`git checkout -b feature/your-feature-name`).
-3.  Make your changes and ensure they adhere to the project's coding style.
-4.  Write clear, concise commit messages.
-5.  Push your branch (`git push origin feature/your-feature-name`).
-6.  Open a Pull Request with a detailed description of your changes.
+1.  **Fork the repository.**
+2.  **Create a new branch** for your feature or bug fix: `git checkout -b feature/your-feature-name` or `bugfix/issue-description`.
+3.  **Make your changes**, ensuring that your code adheres to existing style and quality guidelines.
+4.  **Write clear, concise commit messages.**
+5.  **Push your branch** to your forked repository.
+6.  **Open a Pull Request** to the `main` branch of the original repository, describing your changes in detail.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the `LICENSE` file for details.
