@@ -57,4 +57,4 @@ def delete_todo(todo_id: str):
         raise HTTPException(status_code=404, detail="Todo not found")
     del todos[todo_id]
     return {"message": "Todo deleted successfully"}
-//
+
