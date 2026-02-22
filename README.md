@@ -61,9 +61,9 @@ Follow these steps to set up and run the backend service locally:
 
 ## Environment Variables
 
-The application requires the following environment variables to be set in a `.env` file:
+The application requires several environment variables for configuration. These should be defined in a `.env` file located in the root directory:
 
-- `PORT`: The port number on which the server will run.
+- `PORT`: The port on which the server will run.
 - `MONGO_URI`: The connection string for the MongoDB database.
 - `CLOUDINARY_CLOUD_NAME`: Your Cloudinary cloud name.
 - `CLOUDINARY_API_KEY`: Your Cloudinary API key.
@@ -73,25 +73,36 @@ The application requires the following environment variables to be set in a `.en
 
 ### POST /upload
 
-Handles the upload of original and mask images.
+Endpoint for uploading images.
 
-#### Request
+**Request:**
 
-- **Headers**: `Content-Type: multipart/form-data`
-- **Body**: 
-  - `originalImage`: The original image file.
-  - `maskImage`: The mask image file.
+- **Headers:**
+  - `Content-Type`: `multipart/form-data`
 
-#### Response
+- **Body:**
+  - `original`: The original image file.
+  - `mask`: The mask image file.
 
-- **Success**: `200 OK`
-  - **Body**: JSON object containing the URLs of the uploaded images and metadata.
-- **Error**: `4xx` or `5xx` status codes with error message.
+**Response:**
+
+- **Status Code:** `200 OK`
+- **Body:**
+  - `originalUrl`: URL of the uploaded original image.
+  - `maskUrl`: URL of the uploaded mask image.
+  - `timestamp`: Timestamp of the upload.
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request for any feature additions or bug fixes.
+We welcome contributions to enhance the functionality and features of this project. Please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/your-feature-name`).
+3. Make your changes.
+4. Commit your changes (`git commit -m 'Add some feature'`).
+5. Push to the branch (`git push origin feature/your-feature-name`).
+6. Open a pull request.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
