@@ -61,86 +61,29 @@ To run the application and interact with the API:
 
 ## API Reference
 
-### Root Endpoint
-- **`GET /`**: Returns a welcome message.
+### Endpoints
 
-### Todo Endpoints
-
-- **`POST /todos`**: Create a new todo item.
-  - Request Body: 
-    ```json
-    {
-      "title": "string",
-      "description": "string"
-    }
-    ```
-  - Response: 
-    ```json
-    {
-      "id": "string",
-      "title": "string",
-      "description": "string",
-      "completed": false
-    }
-    ```
-
-- **`GET /todos`**: Retrieve all todo items.
-  - Response: 
-    ```json
-    [
-      {
-        "id": "string",
-        "title": "string",
-        "description": "string",
-        "completed": false
-      }
-    ]
-    ```
-
-- **`GET /todos/{todo_id}`**: Retrieve a specific todo item by its ID.
-  - Response: 
-    ```json
-    {
-      "id": "string",
-      "title": "string",
-      "description": "string",
-      "completed": false
-    }
-    ```
-
-- **`PUT /todos/{todo_id}`**: Update a specific todo item by its ID.
-  - Request Body:
-    ```json
-    {
-      "title": "string",
-      "description": "string"
-    }
-    ```
-  - Response:
-    ```json
-    {
-      "id": "string",
-      "title": "string",
-      "description": "string",
-      "completed": false
-    }
-    ```
-
-- **`DELETE /todos/{todo_id}`**: Delete a specific todo item by its ID.
-  - Response:
-    ```json
-    {
-      "message": "Todo deleted successfully"
-    }
-    ```
+- **GET /**: Returns a welcome message.
+- **POST /todos**: Create a new todo item.
+  - Request body: `{"title": "string", "description": "string (optional)"}`
+  - Response: `{"id": "string", "title": "string", "description": "string", "completed": false}`
+- **GET /todos**: Retrieve a list of all todo items.
+  - Response: `[{"id": "string", "title": "string", "description": "string", "completed": false}, ...]`
+- **GET /todos/{todo_id}**: Retrieve a specific todo item by its ID.
+  - Response: `{"id": "string", "title": "string", "description": "string", "completed": false}`
+- **PUT /todos/{todo_id}**: Update an existing todo item.
+  - Request body: `{"title": "string", "description": "string (optional)"}`
+  - Response: `{"id": "string", "title": "string", "description": "string", "completed": false}`
+- **DELETE /todos/{todo_id}**: Delete a specific todo item by its ID.
+  - Response: `{"message": "Todo deleted successfully"}`
 
 ## Contributing
 
-Contributions are welcome! If you'd like to improve or extend the functionality of this service, feel free to fork the repository and submit a pull request.
+Contributions are welcome! Please fork the repository and submit a pull request with your changes. Ensure your code adheres to the existing style and include tests for any new features.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is open source and available under the MIT License.
 
 ---
-> 🤖 *Last automated update: 2026-02-22 20:24:26*
+> 🤖 *Last automated update: 2026-02-22 20:24:48*
