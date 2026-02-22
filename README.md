@@ -96,6 +96,56 @@ Uploads a document for processing.
 - **Parameters**: File upload (`file`)
 - **Response**: JSON with status of the upload and processing task
 
+### GET /
+
+Returns a welcome message.
+
+- **Method**: `GET`
+- **Endpoint**: `/`
+- **Response**: JSON with a welcome message
+
+### POST /todos
+
+Creates a new todo item.
+
+- **Method**: `POST`
+- **Endpoint**: `/todos`
+- **Parameters**: JSON body with `title` and optional `description`
+- **Response**: JSON with the created todo item
+
+### GET /todos
+
+Lists all todo items.
+
+- **Method**: `GET`
+- **Endpoint**: `/todos`
+- **Response**: JSON list of all todo items
+
+### GET /todos/{todo_id}
+
+Retrieves a specific todo item by ID.
+
+- **Method**: `GET`
+- **Endpoint**: `/todos/{todo_id}`
+- **Response**: JSON with the requested todo item
+
+### PUT /todos/{todo_id}
+
+Updates a specific todo item by ID.
+
+- **Method**: `PUT`
+- **Endpoint**: `/todos/{todo_id}`
+- **Parameters**: JSON body with updated `title` and `description`
+- **Response**: JSON with the updated todo item
+
+### DELETE /todos/{todo_id}
+
+Deletes a specific todo item by ID.
+
+- **Method**: `DELETE`
+- **Endpoint**: `/todos/{todo_id}`
+- **Response**: JSON with a success message
+
 ## Contributing
 
 Contributions are welcome! Please fork the repository and create a pull request for any changes. Ensure that your code adheres to the project's coding standards and includes appropriate tests.
