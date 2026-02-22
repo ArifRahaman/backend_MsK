@@ -1,6 +1,6 @@
 from azure.identity import ClientSecretCredential
 from openai import AzureOpenAI
-##
+
 # ---------- Azure AD / Entra ID Credentials ----------
 AZURE_TENANT_ID = ""
 AZURE_CLIENT_ID = ""
