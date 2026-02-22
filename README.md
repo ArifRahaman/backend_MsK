@@ -61,9 +61,9 @@ Follow these steps to set up and run the backend service locally:
 
 ## Environment Variables
 
-The application requires several environment variables for configuration. These should be defined in a `.env` file located in the root directory:
+The application requires the following environment variables to be set in a `.env` file:
 
-- `PORT`: The port on which the server will run.
+- `PORT`: The port number on which the server will run.
 - `MONGO_URI`: The connection string for the MongoDB database.
 - `CLOUDINARY_CLOUD_NAME`: Your Cloudinary cloud name.
 - `CLOUDINARY_API_KEY`: Your Cloudinary API key.
@@ -73,28 +73,22 @@ The application requires several environment variables for configuration. These 
 
 ### POST /upload
 
-Endpoint for uploading images.
+Endpoint to upload images.
 
-**Request:**
-
-- **Headers:**
+- **URL**: `/upload`
+- **Method**: `POST`
+- **Headers**: 
   - `Content-Type`: `multipart/form-data`
-
-- **Body:**
-  - `original`: The original image file.
-  - `mask`: The mask image file.
-
-**Response:**
-
-- **Status Code:** `200 OK`
-- **Body:**
-  - `originalUrl`: URL of the uploaded original image.
-  - `maskUrl`: URL of the uploaded mask image.
-  - `timestamp`: Timestamp of the upload.
+- **Request Body**: 
+  - `original`: Original image file.
+  - `mask`: Mask image file.
+- **Response**: 
+  - `200 OK`: Successfully uploaded images.
+  - `400 Bad Request`: Invalid request or missing files.
 
 ## Contributing
 
-We welcome contributions to enhance the functionality and features of this project. Please follow these steps:
+We welcome contributions to enhance the functionality and usability of this project. Please follow these steps:
 
 1. Fork the repository.
 2. Create a new branch (`git checkout -b feature/your-feature-name`).
