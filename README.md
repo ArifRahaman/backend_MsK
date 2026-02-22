@@ -41,9 +41,7 @@ Follow these steps to set up and run the backend service locally:
     ```
 
 3.  **Install dependencies:**
-    This project uses `pip` to manage its dependencies. It's recommended to create a `requirements.txt` file.
-
-    Create a `requirements.txt` file in the root of the project with the following content:
+    This project uses `pip` to manage its dependencies. Create a `requirements.txt` file in the root of the project with the following content:
     ```
     fastapi
     uvicorn
@@ -61,112 +59,112 @@ Follow these steps to set up and run the backend service locally:
 
 ## Usage Guide
 
-### Starting the Backend Service
+To start the FastAPI backend service and begin ingesting documents:
 
-To start the FastAPI application using Uvicorn, navigate to the project's root directory in your activated virtual environment and run:
+1.  **Ensure virtual environment is active:**
+    ```bash
+    source venv/bin/activate
+    ```
 
-```bash
-uvicorn index:app --host 0.0.0.0 --port 8000 --reload
-```
+2.  **Start the FastAPI application:**
+    Assuming your main application file containing the FastAPI instance (e.g., the content provided in `index.js`) is named `main.py` in your project root, run Uvicorn:
+    ```bash
+    uvicorn main:app --reload --port 8000
+    ```
+    The `--reload` flag enables auto-reloading on code changes, and `--port 8000` sets the server port. The service will typically be accessible at `http://127.0.0.1:8000`.
 
-*   `index:app`: Specifies that the FastAPI application instance named `app` is found within the `index.py` file.
-*   `--host 0.0.0.0`: Makes the server accessible from any IP address (useful for Docker or network access). For local-only access, you can use `127.0.0.1` or `localhost`.
-*   `--port 8000`: Runs the server on port 8000.
-*   `--reload`: Enables auto-reloading of the server on code changes during development.
+3.  **Upload Documents:**
+    You can interact with the API using tools like `curl`, Postman, or a Python script.
 
-Once the server is running, you can access the API documentation at `http://localhost:8000/docs` (Swagger UI) or `http://localhost:8000/redoc` (ReDoc).
+    **Example using `curl` to upload a PDF file:**
+    ```bash
+    curl -X POST "http://127.0.0.1:8000/uploadfile/" \
+         -H "accept: application/json" \
+         -H "Content-Type: multipart/form-data" \
+         -F "file=@/path/to/your/document.pdf;type=application/pdf"
+    ```
+    Replace `/path/to/your/document.pdf` with the actual path to the file you want to upload. The `type` parameter should match the MIME type of your file (e.g., `text/plain` for TXT, `application/json` for JSON, `text/markdown` for MD).
 
-### Uploading Documents for Ingestion
+    **Example using Python `requests`:**
+    ```python
+    import requests
 
-You can upload documents to the `/uploadfile/` endpoint using tools like `curl` or any HTTP client library.
+    file_path = "/path/to/your/document.txt"
+    with open(file_path, "rb") as f:
+        files = {"file": (file_path.split('/')[-1], f, "text/plain")}
+        response = requests.post("http://127.0.0.1:8000/uploadfile/", files=files)
 
-**Example using `curl` (Linux/macOS):**
+    print(response.json())
+    ```
 
-To upload a PDF file:
-```bash
-curl -X POST "http://localhost:8000/uploadfile/" \
-     -H "accept: application/json" \
-     -H "Content-Type: multipart/form-data" \
-     -F "file=@/path/to/your/document.pdf;type=application/pdf"
-```
-
-To upload a TXT file:
-```bash
-curl -X POST "http://localhost:8000/uploadfile/" \
-     -H "accept: application/json" \
-     -H "Content-Type: multipart/form-data" \
-     -F "file=@/path/to/your/document.txt;type=text/plain"
-```
-
-Replace `/path/to/your/document.pdf` or `/path/to/your/document.txt` with the actual path to your file.
-
-**Expected Response:**
-
-Upon successful upload and initiation of the background ingestion task, you will receive a JSON response:
-
-```json
-{
-  "message": "File uploaded successfully and ingestion initiated."
-}
-```
-
-The server will then process the file in the background, extracting text and feeding it to the `rag_logic` module. You can monitor the server logs for progress and any potential issues.
+Upon successful upload, the file will be temporarily stored in the `uploads` directory, its text content will be extracted in a background task, and then ingested into the 3-Model Ensemble RAG system.
 
 ## Environment Variables
 
-The project uses `python-dotenv` to manage environment variables from a `.env` file. These variables are crucial for configuring various aspects of the application, especially for the `rag_logic` module, which might require API keys, model identifiers, or connection strings.
+This project uses `python-dotenv` to load environment variables from a `.env` file for sensitive configurations. While the provided `index.js` excerpt only shows `load_dotenv()`, indicating that environment variables are *loaded*, it does not explicitly *use* any specific variables.
 
-Create a file named `.env` in the root directory of your project (e.g., `backend_MsK/.env`).
+If the `rag_logic` module or other parts of the application require specific configurations (e.g., API keys for external services, database connection strings, RAG model parameters), they would typically be defined in your `.env` file.
 
-**Example `.env` structure (add variables as required by `rag_logic`):**
+**Example `.env` file structure (hypothetical):**
 
-```env
-# Example environment variables (adjust based on actual needs of rag_logic)
-# OPENAI_API_KEY="your_openai_api_key_here"
-# HUGGINGFACE_API_TOKEN="your_huggingface_token_here"
-# VECTOR_DB_URL="your_vector_database_connection_string"
-# MODEL_NAME_1="model-a"
-# MODEL_NAME_2="model-b"
-# MODEL_NAME_3="model-c"
+```dotenv
+# .env
+RAG_API_KEY="your_rag_service_api_key_here"
+DATABASE_URL="sqlite:///./sql_app.db"
+LOG_LEVEL="INFO"
 ```
-*Note: The specific environment variables required will depend on the implementation details of the `rag_logic` module, which is not fully exposed in these excerpts. Consult the `rag_logic` module's documentation or source code for exact requirements.*
+Please consult the `rag_logic` module or other parts of the codebase for the exact environment variables expected.
 
 ## API Reference
 
-### `POST /uploadfile/`
+The backend service provides a RESTful API for document ingestion.
 
-Uploads a document for text extraction and subsequent ingestion into the Ensemble RAG pipeline.
+### Endpoint: `POST /uploadfile/`
+
+Uploads a document for text extraction and ingestion into the Ensemble RAG pipeline.
 
 *   **URL**: `/uploadfile/`
 *   **Method**: `POST`
-*   **Headers**:
-    *   `Content-Type: multipart/form-data`
-*   **Parameters**:
-    *   `file`: (`UploadFile`, **required**) The document to be uploaded. Supported types include PDF, TXT, MD, and JSON.
-*   **Responses**:
-    *   **`200 OK`**:
+*   **Request Body**:
+    *   `file` (multipart/form-data): The document file to be uploaded. Supports PDF, TXT, MD, and JSON formats.
+*   **Response**:
+    *   **200 OK**:
         ```json
         {
-          "message": "File uploaded successfully and ingestion initiated."
+          "message": "File uploaded and ingestion started in background",
+          "filename": "your_document.pdf"
         }
         ```
-        *Description*: Indicates that the file was received and a background task for text extraction and RAG ingestion has been successfully started.
-    *   **`400 Bad Request`**:
-        *Description*: Returned if the uploaded file is malformed, or if other client-side validation errors occur (e.g., if FastAPI's internal validation fails before custom logic is applied).
-    *   **`500 Internal Server Error`**:
-        *Description*: Returned if an unexpected server-side error occurs during file handling, text extraction, or the RAG ingestion process. (While the current implementation logs warnings for unsupported file types, a production-ready API might explicitly raise a `HTTPException` for such cases, resulting in a 400 response.)
+    *   **400 Bad Request**:
+        If the file type is unsupported or no file is provided.
+        ```json
+        {
+          "detail": "No file uploaded or unsupported file type."
+        }
+        ```
+    *   **500 Internal Server Error**:
+        If an unexpected server error occurs during processing.
+        ```json
+        {
+          "detail": "An error occurred during file processing."
+        }
+        ```
 
 ## Contributing
 
-We welcome contributions to enhance this Ensemble RAG backend service! If you're interested in improving the project, please follow these steps:
+We welcome contributions to the Ensemble RAG Backend Service! If you'd like to contribute, please follow these steps:
 
 1.  **Fork the repository.**
-2.  **Create a new branch** for your feature or bug fix: `git checkout -b feature/your-feature-name` or `bugfix/issue-description`.
-3.  **Make your changes**, ensuring that your code adheres to existing style and quality guidelines.
-4.  **Write clear, concise commit messages.**
-5.  **Push your branch** to your forked repository.
-6.  **Open a Pull Request** to the `main` branch of the original repository, describing your changes in detail.
+2.  **Create a new branch** for your feature or bug fix: `git checkout -b feature/your-feature-name` or `bugfix/fix-bug-name`.
+3.  **Implement your changes.**
+4.  **Write tests** for your changes (if applicable).
+5.  **Ensure your code adheres to the project's coding standards.**
+6.  **Commit your changes** with a clear and concise message.
+7.  **Push your branch** to your forked repository.
+8.  **Open a Pull Request** to the `main` branch of the original repository.
+
+Please make sure to describe your changes clearly in the pull request and reference any relevant issues.
 
 ## License
 
-This project is licensed under the MIT License - see the `LICENSE` file for details.
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
