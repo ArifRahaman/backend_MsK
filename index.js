@@ -1,66 +1,59 @@
-from azure.identity import ClientSecretCredential
-from openai import AzureOpenAI
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import List
+import uuid
+
+app = FastAPI(title="Random Todo API")
+
+# In-memory DB
+todos = {}
+
+class TodoCreate(BaseModel):
+    title: str
+    description: str | None = None
+
+class Todo(TodoCreate):
+    id: str
+    completed: bool = False
 
 
-AZURE_TENANT_ID = ""
-AZURE_CLIENT_ID = ""
-AZURE_CLIENT_SECRET = ""
+@app.get("/")
+def root():
+    return {"message": "Welcome to Random Todo API 🚀"}
 
 
-# ---------- Azure OpenAI Resource Info ----------
-AZURE_OPENAI_ENDPOINT = "/"
-AZURE_OPENAI_API_VERSION = ""
-AZURE_OPENAI_EMBEDDING_DEPLOYMENT = ""  # e.g., text-embedding-3-large
-AZURE_OPENAI_CHATGPT_DEPLOYMENT = "" ;
-
-# ---------- Get AAD Token ----------
-credential = ClientSecretCredential(
-    tenant_id=AZURE_TENANT_ID,
-    client_id=AZURE_CLIENT_ID,
-    client_secret=AZURE_CLIENT_SECRET
-)
-
-# Azure OpenAI token scope
-token = credential.get_token("https://cognitiveservices.azure.com/.default")
-
-# ---------- Initialize Azure OpenAI Client ----------
-client = AzureOpenAI(
-    azure_endpoint=AZURE_OPENAI_ENDPOINT,
-    api_version=AZURE_OPENAI_API_VERSION,
-    azure_ad_token=token.token  # <<--- IMPORTANT
-)
-
-# ---------- Test Embeddings ----------
-text = "Testing Azure OpenAI embeddings via AAD token."
-
-try:
-    resp = client.embeddings.create(
-        model=AZURE_OPENAI_EMBEDDING_DEPLOYMENT,
-        input=text
-    )
-    
-    embedding = resp.data[0].embedding
-    print("Embedding size:", len(embedding))
-    print("Sample:", embedding[:10])
-
-except Exception as e:
-    print("❌ Error:", e)
+@app.post("/todos", response_model=Todo)
+def create_todo(todo: TodoCreate):
+    todo_id = str(uuid.uuid4())
+    new_todo = Todo(id=todo_id, **todo.dict())
+    todos[todo_id] = new_todo
+    return new_todo
 
 
-# ---------- Test ChatCompletion ----------
-try:
-    response = client.chat.completions.create(
-        model=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "Say a one-line greeting!"}
-        ],
-        max_tokens=50
-    )
-    
-    # FIX → use .content instead of ["content"]
-    print("Chat Response:")
-    print(response.choices[0].message.content)
+@app.get("/todos", response_model=List[Todo])
+def list_todos():
+    return list(todos.values())
 
-except Exception as e:
-    print("❌ Error:", e) 
+
+@app.get("/todos/{todo_id}", response_model=Todo)
+def get_todo(todo_id: str):
+    if todo_id not in todos:
+        raise HTTPException(status_code=404, detail="Todo not found")
+    return todos[todo_id]
+
+
+@app.put("/todos/{todo_id}", response_model=Todo)
+def update_todo(todo_id: str, updated: TodoCreate):
+    if todo_id not in todos:
+        raise HTTPException(status_code=404, detail="Todo not found")
+    todos[todo_id].title = updated.title
+    todos[todo_id].description = updated.description
+    return todos[todo_id]
+
+
+@app.delete("/todos/{todo_id}")
+def delete_todo(todo_id: str):
+    if todo_id not in todos:
+        raise HTTPException(status_code=404, detail="Todo not found")
+    del todos[todo_id]
+    return {"message": "Todo deleted successfully"}
