@@ -1,25 +1,27 @@
-# Ensemble RAG (3-Model Consensus) Backend Service
+# MSK Backend Service for Image Management
 
-This repository hosts a robust backend service for a Retrieval Augmented Generation (RAG) system, engineered to ingest and process various document types using an ensemble of three AI models. It facilitates the secure upload, text extraction, and background processing of documents, making the content available for advanced querying and generation tasks through its integrated RAG logic.
+This repository hosts the backend service for the MSK (Masking Service Kit) application. It is responsible for handling secure image uploads (original images and their corresponding mask images) to Cloudinary, and persisting the resulting image URLs and metadata in a MongoDB database. This service provides a robust API to facilitate image processing workflows for a connected frontend application.
 
 ## Features
 
-*   **Document Ingestion**: Supports secure upload and processing of multiple document types, including PDF, TXT, Markdown, and JSON files.
-*   **Intelligent Text Extraction**: Implements a dedicated helper to efficiently extract textual content from uploaded documents, handling different file formats robustly.
-*   **Ensemble RAG Logic**: Integrates a sophisticated 3-model consensus RAG system (defined in `rag_logic.py`) for enhanced information retrieval and generation, leveraging multiple perspectives for improved accuracy and reliability.
-*   **Asynchronous Processing**: Utilizes FastAPI's `BackgroundTasks` to handle computationally intensive text extraction and ingestion processes asynchronously, ensuring the API remains responsive.
-*   **File Management**: Organizes uploaded files into a dedicated `uploads/` directory for temporary storage before processing, with robust error handling and cleanup mechanisms.
-*   **Environment Variable Management**: Employs `python-dotenv` for secure and flexible management of sensitive configurations and API keys, separating them from the codebase.
-*   **Structured Logging**: Incorporates comprehensive logging to monitor application behavior, track file processing, and aid in debugging.
+*   **Image Uploads**: Securely handles the upload of two distinct image files (original and mask) in a single request, leveraging `multer` for `multipart/form-data` processing.
+*   **Cloudinary Integration**: Seamlessly uploads both original and mask images to Cloudinary, a cloud-based media management service, ensuring efficient storage and delivery.
+*   **MongoDB Persistence**: Stores the Cloudinary URLs of the uploaded images, along with their upload timestamps, in a MongoDB database using Mongoose for easy retrieval and management.
+*   **RESTful API**: Provides a dedicated `POST` endpoint for handling image upload requests.
+*   **CORS Support**: Configured to allow cross-origin requests from specific frontend domains (e.g., `https://frontend-msk.vercel.app`), ensuring secure integration with the client application.
+*   **Environment Variable Management**: Utilizes `dotenv` to manage sensitive configuration details like database connection strings and Cloudinary API credentials, enhancing security and deployment flexibility.
+*   **Structured Logging**: Incorporates basic console logging for server status and MongoDB connection, aiding in development and debugging.
 
 ## Tech Stack
 
-*   **Python**: The core programming language for the backend.
-*   **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints.
-*   **pypdf**: A pure-python PDF library capable of splitting, merging, cropping, and transforming PDF pages, and extracting text.
-*   **python-dotenv**: A module that loads environment variables from a `.env` file into `os.environ`.
-*   **Uvicorn**: An ASGI server, used to run FastAPI applications.
-*   **`rag_logic.py`**: (External module) Houses the custom 3-model ensemble RAG implementation, responsible for embedding, retrieval, and generation based on ingested documents. This module is imported and utilized by `index.js` but its internal details are not provided in this context.
+*   **Node.js**: The JavaScript runtime environment.
+*   **Express.js**: A fast, unopinionated, minimalist web framework for Node.js, used for building the API.
+*   **Multer**: A Node.js middleware for handling `multipart/form-data`, primarily used for parsing file uploads.
+*   **Multer-Storage-Cloudinary**: A Multer storage engine that directly uploads files to Cloudinary.
+*   **Cloudinary**: A cloud-based image and video management service used for storing uploaded media.
+*   **Mongoose**: An elegant MongoDB object modeling tool designed to work in an asynchronous environment.
+*   **Dotenv**: A zero-dependency module that loads environment variables from a `.env` file into `process.env`.
+*   **CORS**: A Node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options.
 
 ## Installation Instructions
 
@@ -31,150 +33,96 @@ Follow these steps to set up and run the backend service locally:
     cd backend_MsK
     ```
 
-2.  **Create a virtual environment (recommended):**
+2.  **Install dependencies:**
+    This project uses `npm` to manage its dependencies.
     ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    npm install
     ```
 
-3.  **Install dependencies:**
-    The project relies on a `requirements.txt` file for its dependencies.
-    ```bash
-    pip install -r requirements.txt
-    ```
-    *If `requirements.txt` is not yet available in the repository, you can create one manually with the following core dependencies, then run the install command:*
-    ```
-    fastapi
-    uvicorn
-    python-dotenv
-    pypdf
-    ```
-    *Note: The `rag_logic.py` module may have additional dependencies (e.g., for NLP models, vector databases, or API clients) not listed here. You may need to install them separately if they are not included in a comprehensive `requirements.txt`.*
-
-4.  **Create a `.env` file:**
+3.  **Create a `.env` file:**
     In the root directory of the project, create a file named `.env` and configure your environment variables. Refer to the [Environment Variables](#environment-variables) section for detailed information.
 
     Example `.env` structure:
     ```ini
-    # Server configuration
     PORT=8000
-    HOST="0.0.0.0"
-
-    # RAG specific configurations (adjust based on your rag_logic.py implementation)
-    # Example: If your RAG system uses OpenAI
-    # OPENAI_API_KEY="your_openai_api_key"
-    # VECTOR_DB_URI="your_vector_database_connection_string"
-    # MODEL_NAME="gpt-4o" # Or other model identifiers
-    # UPLOAD_DIRECTORY="uploads" # Optional, code defaults to 'uploads' if not set
+    MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/<dbname>?retryWrites=true&w=majority
+    CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+    CLOUDINARY_API_KEY=your_cloudinary_api_key
+    CLOUDINARY_API_SECRET=your_cloudinary_api_secret
     ```
-
-5.  **Start the server:**
-    ```bash
-    uvicorn index:app --host 0.0.0.0 --port 8000 --reload
-    ```
-    The `--reload` flag is useful for development as it automatically restarts the server on code changes. For production, consider removing `--reload` for better performance and stability.
-
-    The API will be accessible at `http://127.0.0.1:8000` (or the specified host/port).
-    You can access the interactive API documentation (Swagger UI) at `http://127.0.0.1:8000/docs`.
 
 ## Usage Guide
 
-This service primarily provides an API endpoint for ingesting documents into the RAG system.
+1.  **Start the server:**
+    Once you have installed the dependencies and configured your `.env` file, you can start the server using:
+    ```bash
+    node index.js
+    ```
+    or, if defined in `package.json`:
+    ```bash
+    npm start
+    ```
+    The server will typically run on the port specified in your `.env` file (e.g., `http://localhost:8000`).
 
-### Ingesting Documents
-
-To add new documents for processing by the RAG system, send a `POST` request to the `/ingest-document` endpoint. The service will handle the file upload, extract text, and schedule the document for background processing through the ensemble RAG logic.
-
-#### Example using `curl`:
-
-```bash
-curl -X POST "http://127.0.0.1:8000/ingest-document" \
-     -H "accept: application/json" \
-     -H "Content-Type: multipart/form-data" \
-     -F "file=@/path/to/your/document.pdf;type=application/pdf"
-```
-
-Replace `/path/to/your/document.pdf` with the actual file path of your document. The API supports `pdf`, `txt`, `md`, and `json` file formats.
-
-#### Expected Response:
-
-A successful ingestion request will return a confirmation message indicating that the document has been received and scheduled for processing.
-
-```json
-{
-  "message": "Document uploaded and scheduled for ingestion.",
-  "filename": "your_document.pdf"
-}
-```
-
-The actual ingestion process (text extraction, feeding data to the RAG logic) runs as a background task. You should monitor the server logs for detailed status updates and any potential errors during this background operation.
-
-*Further usage (e.g., querying the RAG system, retrieving generated responses) would typically involve additional API endpoints not detailed in the provided `index.js` excerpt. These would likely be implemented within or alongside the `rag_logic.py` module.*
+2.  **Interact with the API:**
+    This backend is designed to be consumed by a frontend application. It exposes an API endpoint for image uploads.
+    For example, a connected frontend (like `https://frontend-msk.vercel.app`) would send `multipart/form-data` requests to the `/upload` endpoint, containing the `original` and `mask` image files.
 
 ## Environment Variables
 
-The project uses `python-dotenv` to load environment variables from a `.env` file. Create this file in the root directory of your project to configure various aspects of the application.
+The project uses environment variables for sensitive data and configuration. Create a `.env` file in the root directory of the project with the following variables:
 
-*   **`PORT`**: (Optional) Specifies the port on which the FastAPI server will listen for incoming requests. Defaults to `8000` if not explicitly set.
-*   **`HOST`**: (Optional) Defines the host address for the FastAPI server. Defaults to `0.0.0.0`, making the server accessible from any network interface. Use `127.0.0.1` to restrict access to the local machine only.
-*   **`UPLOAD_DIR`**: (Optional) The directory where uploaded documents are temporarily stored before processing. The current `index.js` hardcodes this to `uploads/`, but including it here provides a clear configuration point if it were to be made dynamic.
-
-**RAG-specific variables (dependent on `rag_logic.py`):**
-
-Your `rag_logic.py` module will almost certainly require additional environment variables for its configuration. These might include API keys for external Language Models (LLMs), connection strings for vector databases, or paths to locally stored models. Examples of such variables often include:
-
-*   **`OPENAI_API_KEY`**: API key for integrating with OpenAI services.
-*   **`HF_TOKEN`**: Hugging Face API token for accessing models from the Hugging Face Hub.
-*   **`VECTOR_DB_CONNECTION_STRING`**: Connection details for your chosen vector database (e.g., Pinecone, Weaviate, ChromaDB, Milvus).
-*   **`EMBEDDING_MODEL_NAME`**: Identifier or path for the embedding model used in the RAG pipeline.
-*   **`GENERATION_MODEL_NAME`**: Identifier or path for the generative model used to produce responses.
+*   `PORT`: The port number on which the Express server will listen (e.g., `8000`).
+*   `MONGO_URI`: Your MongoDB connection string. This typically includes your username, password, cluster address, and database name.
+    *   Example: `mongodb+srv://your_user:your_password@your_cluster.mongodb.net/your_database?retryWrites=true&w=majority`
+*   `CLOUDINARY_CLOUD_NAME`: Your Cloudinary cloud name, found in your Cloudinary dashboard.
+*   `CLOUDINARY_API_KEY`: Your Cloudinary API Key.
+*   `CLOUDINARY_API_SECRET`: Your Cloudinary API Secret.
 
 ## API Reference
 
-The primary API endpoint for interacting with the document ingestion service is described below. For full details and interactive testing, refer to the automatically generated OpenAPI documentation available at `/docs` when the server is running.
+### `POST /upload`
 
-### `POST /ingest-document`
-
-Uploads a document file to the backend service for text extraction and subsequent ingestion into the ensemble RAG system.
-
-*   **Method**: `POST`
-*   **URL**: `/ingest-document`
-*   **Request Body**: `multipart/form-data`
-    *   **`file`** (File, Required): The document file to be uploaded. Supported formats include `.pdf`, `.txt`, `.md`, and `.json`.
-*   **Responses**:
-    *   **`200 OK`**: Document successfully uploaded and scheduled for background processing.
+*   **Description**: Uploads an original image and a mask image to Cloudinary, then saves their respective URLs and other metadata to MongoDB.
+*   **Request Method**: `POST`
+*   **Request URL**: `/upload`
+*   **Content-Type**: `multipart/form-data`
+*   **Request Body (Form Data)**:
+    *   `original`: (**File**) The original image file to be uploaded.
+    *   `mask`: (**File**) The mask image file corresponding to the original image.
+*   **Success Response (200 OK)**:
+    ```json
+    {
+        "originalImageUrl": "https://res.cloudinary.com/your_cloud_name/image/upload/v.../image_mask_tool/original_image_id.png",
+        "maskImageUrl": "https://res.cloudinary.com/your_cloud_name/image/upload/v.../image_mask_tool/mask_image_id.png",
+        "message": "Images uploaded successfully"
+    }
+    ```
+*   **Error Responses**:
+    *   `400 Bad Request`: If required files are missing or validation fails.
         ```json
         {
-          "message": "Document uploaded and scheduled for ingestion.",
-          "filename": "example.pdf"
+            "error": "Both original and mask images are required."
         }
         ```
-    *   **`400 Bad Request`**: Indicates an issue with the request, such as no file being provided or an unsupported file type.
-    *   **`500 Internal Server Error`**: Signifies a server-side error during file handling, text extraction, or background task scheduling.
+    *   `500 Internal Server Error`: For server-side issues (e.g., Cloudinary upload failure, MongoDB save error).
+        ```json
+        {
+            "error": "Failed to upload images or save to database."
+        }
+        ```
 
 ## Contributing
 
-Contributions to this project are welcome! If you'd like to contribute, please follow these guidelines:
+Contributions are welcome! If you have suggestions for improvements, bug fixes, or new features, please feel free to:
 
-1.  **Fork the repository:** Start by forking the `ArifRahaman/backend_MsK` repository to your GitHub account.
-2.  **Create a new branch:** For each feature or bug fix, create a dedicated branch from `main`:
-    ```bash
-    git checkout -b feature/your-feature-name
-    ```
-    (e.g., `feature/add-new-file-type` or `bugfix/fix-pdf-parsing`)
-3.  **Make your changes:** Implement your feature or fix the bug.
-4.  **Commit your changes:** Write clear and concise commit messages.
-    ```bash
-    git commit -m 'feat: Add support for DOCX file type'
-    ```
-5.  **Push to the branch:** Upload your local branch to your forked repository:
-    ```bash
-    git push origin feature/your-feature-name
-    ```
-6.  **Open a Pull Request (PR):** Navigate to the original repository on GitHub and open a pull request from your new branch to the `main` branch. Provide a detailed description of your changes.
-
-Please ensure your code adheres to existing style guidelines, includes appropriate tests, and passes all existing checks before submitting a PR.
+1.  Fork the repository.
+2.  Create a new branch (`git checkout -b feature/your-feature-name`).
+3.  Make your changes.
+4.  Commit your changes (`git commit -m 'Add new feature'`).
+5.  Push to the branch (`git push origin feature/your-feature-name`).
+6.  Open a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License. A copy of the license can be found in the `LICENSE` file within this repository.
+This project is open-sourced under the MIT License. See the `LICENSE` file for more details (if available in the repository, otherwise a placeholder).
