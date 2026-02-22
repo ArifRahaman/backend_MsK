@@ -55,101 +55,128 @@ Follow these steps to set up and run the backend service locally:
     *(Note: The `rag_logic` module is assumed to be part of this project or provided separately, and any external dependencies it has should also be added to `requirements.txt` if applicable.)*
 
 4. **Create a `.env` file:**
-    In the root directory of the project, create a file named `.env` and configure your environment variables. Refer to the [Environment Variables](#environment-variables) section for detailed information.
+    In the root directory of the project, create a file named `.env` and configure your environment variables.
 
 ## Usage Guide
 
-To start the service, run the FastAPI application using Uvicorn:
-
+Run the FastAPI application using Uvicorn:
 ```bash
-uvicorn main:app --reload
+uvicorn index:app --reload
 ```
 
-Once the server is running, you can upload files via the `/uploadfile/` endpoint. Use a tool like `curl` or Postman for testing:
-
-```bash
-curl -X POST "http://localhost:8000/uploadfile/" -F "file=@/path/to/your/document.pdf"
-```
+Once the server is running, you can interact with the API endpoints as described in the API Reference section.
 
 ## Environment Variables
 
-The `.env` file should include the following variables:
+The application uses environment variables for configuration. Ensure you have a `.env` file in the root directory with necessary configuration details, such as:
 
-- `AZURE_TENANT_ID`
-- `AZURE_CLIENT_ID`
-- `AZURE_CLIENT_SECRET`
-- `AZURE_OPENAI_ENDPOINT`
-- `AZURE_OPENAI_API_VERSION`
-- `AZURE_OPENAI_EMBEDDING_DEPLOYMENT`
-- `AZURE_OPENAI_CHATGPT_DEPLOYMENT`
-
-These are used for Azure AD authentication and Azure OpenAI integration.
+```
+# Example environment variables
+DATABASE_URL=your_database_url
+SECRET_KEY=your_secret_key
+```
 
 ## API Reference
 
-### POST /uploadfile/
+### Endpoints
 
-Uploads a document for processing.
+- **GET /**: Welcome message.
+  
+  **Response**: 
+  ```json
+  {
+    "message": "Welcome to Random Todo API 🚀"
+  }
+  ```
 
-- **Method**: `POST`
-- **Endpoint**: `/uploadfile/`
-- **Parameters**: File upload (`file`)
-- **Response**: JSON with status of the upload and processing task
+- **POST /todos**: Create a new todo item.
+  
+  **Request Body**:
+  ```json
+  {
+    "title": "Sample Todo",
+    "description": "This is a sample todo item"
+  }
+  ```
 
-### GET /
+  **Response**:
+  ```json
+  {
+    "id": "unique-id",
+    "title": "Sample Todo",
+    "description": "This is a sample todo item",
+    "completed": false
+  }
+  ```
 
-Returns a welcome message.
+- **GET /todos**: List all todo items.
 
-- **Method**: `GET`
-- **Endpoint**: `/`
-- **Response**: JSON with a welcome message
+  **Response**:
+  ```json
+  [
+    {
+      "id": "unique-id",
+      "title": "Sample Todo",
+      "description": "This is a sample todo item",
+      "completed": false
+    }
+  ]
+  ```
 
-### POST /todos
+- **GET /todos/{todo_id}**: Retrieve a specific todo item by ID.
 
-Creates a new todo item.
+  **Response**:
+  ```json
+  {
+    "id": "unique-id",
+    "title": "Sample Todo",
+    "description": "This is a sample todo item",
+    "completed": false
+  }
+  ```
 
-- **Method**: `POST`
-- **Endpoint**: `/todos`
-- **Parameters**: JSON body with `title` and optional `description`
-- **Response**: JSON with the created todo item
+- **PUT /todos/{todo_id}**: Update a specific todo item by ID.
 
-### GET /todos
+  **Request Body**:
+  ```json
+  {
+    "title": "Updated Todo",
+    "description": "Updated description"
+  }
+  ```
 
-Lists all todo items.
+  **Response**:
+  ```json
+  {
+    "id": "unique-id",
+    "title": "Updated Todo",
+    "description": "Updated description",
+    "completed": false
+  }
+  ```
 
-- **Method**: `GET`
-- **Endpoint**: `/todos`
-- **Response**: JSON list of all todo items
+- **DELETE /todos/{todo_id}**: Delete a specific todo item by ID.
 
-### GET /todos/{todo_id}
-
-Retrieves a specific todo item by ID.
-
-- **Method**: `GET`
-- **Endpoint**: `/todos/{todo_id}`
-- **Response**: JSON with the requested todo item
-
-### PUT /todos/{todo_id}
-
-Updates a specific todo item by ID.
-
-- **Method**: `PUT`
-- **Endpoint**: `/todos/{todo_id}`
-- **Parameters**: JSON body with updated `title` and `description`
-- **Response**: JSON with the updated todo item
-
-### DELETE /todos/{todo_id}
-
-Deletes a specific todo item by ID.
-
-- **Method**: `DELETE`
-- **Endpoint**: `/todos/{todo_id}`
-- **Response**: JSON with a success message
+  **Response**:
+  ```json
+  {
+    "message": "Todo deleted successfully"
+  }
+  ```
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and create a pull request for any changes. Ensure that your code adheres to the project's coding standards and includes appropriate tests.
+Contributions are welcome! Please fork the repository and use a feature branch. Pull requests are warmly welcome.
+
+1. Fork the repository.
+2. Create your feature branch: `git checkout -b my-feature-branch`
+3. Commit your changes: `git commit -m 'Add some feature'`
+4. Push to the branch: `git push origin my-feature-branch`
+5. Submit a pull request.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+> 🤖 *Last automated update: 2026-02-22 20:07:00*
