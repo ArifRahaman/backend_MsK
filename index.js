@@ -13,8 +13,8 @@ const cors = require("cors");
 
 const app = express();
 const corsOptions = {
-  origin: 'https://frontend-msk.vercel.app', // Allow only this origin
-  credentials: true             // Enable cookies sharing if needed
+  origin: 'https://frontend-msk.vercel.app', 
+  credentials: true             
 };
 app.use(cors(corsOptions));
 // app.use(cors());
