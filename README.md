@@ -1,133 +1,277 @@
-# Ensemble RAG (3-Model Consensus) Backend Service
+# Random Todo API Backend Service
 
-This repository hosts the backend service for an Ensemble RAG (Retrieval Augmented Generation) system. It is specifically designed for processing and ingesting various document types (PDF, TXT, MD, JSON) to facilitate a 3-Model Consensus approach for robust information retrieval and knowledge synthesis. The service allows users to securely upload documents, extracts their text content, and seamlessly integrates this content into a RAG pipeline for advanced querying.
+This repository hosts a simple, in-memory RESTful API for managing todo items. Built with FastAPI, this service provides standard CRUD (Create, Read, Update, Delete) operations, allowing users to efficiently manage their tasks. It's designed for simplicity and ease of use, making it an excellent starting point for learning FastAPI or as a backend for a quick todo application.
 
 ## Features
 
-- **Document Ingestion**: Supports secure upload of various document types including PDF, TXT, Markdown, and JSON files via a dedicated `/uploadfile/` endpoint.
-- **Intelligent Text Extraction**: Utilizes `pypdf` for robust text extraction from PDF files and standard file reading for other text-based formats (TXT, MD, JSON).
-- **Background Processing**: Leverages FastAPI's `BackgroundTasks` to handle computationally intensive text extraction and RAG ingestion processes asynchronously, ensuring a responsive API.
-- **Ensemble RAG Integration**: Designed to integrate with a "3-Model Consensus" RAG logic (via a custom `rag_logic` module), enabling sophisticated information retrieval and knowledge synthesis.
-- **RESTful API**: Provides a dedicated `POST` endpoint (`/uploadfile/`) for handling file uploads and initiating the ingestion process.
-- **Temporary File Storage**: Uploaded files are temporarily stored in a designated `uploads` directory before processing.
-- **Environment Variable Management**: Utilizes `python-dotenv` to manage sensitive configuration details, enhancing security and deployment flexibility.
-- **Structured Logging**: Incorporates Python's built-in `logging` module for comprehensive server activity, file processing, and error handling, aiding in development and debugging.
+*   **Todo Management (CRUD)**: Full support for creating, retrieving, updating, and deleting todo items.
+*   **RESTful API**: Exposes clear and intuitive endpoints following REST principles for task management.
+*   **In-Memory Storage**: Todo items are stored in a dictionary within the application's memory, providing a non-persistent data store ideal for demonstration or temporary use cases.
+*   **FastAPI Framework**: Leverages the high performance and developer-friendly features of FastAPI for rapid API development.
+*   **Pydantic Models**: Ensures robust data validation and serialization for incoming requests and outgoing responses, maintaining data integrity.
+*   **Unique ID Generation**: Automatically assigns unique identifiers (UUIDs) to each todo item upon creation.
+*   **Interactive API Documentation**: FastAPI automatically generates interactive API documentation (Swagger UI / ReDoc) for easy exploration and testing of endpoints.
 
 ## Tech Stack
 
-- **Python**: The core programming language for the backend logic.
-- **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints.
-- **Uvicorn**: An ASGI server, used to run the FastAPI application.
-- **`pypdf`**: A pure-Python PDF library capable of splitting, merging, cropping, and transforming PDF pages, and specifically used here for efficient text extraction.
-- **`python-dotenv`**: A zero-dependency module that loads environment variables from a `.env` file into `os.environ`.
-- **`logging`**: Python's built-in module for emitting log messages throughout the application.
-- **`pathlib`**: Python's object-oriented filesystem paths module, used for handling file paths efficiently.
-- **`rag_logic`**: (Custom module) The core logic implementation for the 3-Model Ensemble RAG system, responsible for processing extracted text and integrating it into the retrieval augmented generation pipeline.
+*   **Python**: The core programming language used for the backend logic.
+*   **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints.
+*   **Uvicorn**: An ASGI server, essential for running the FastAPI application.
+*   **Pydantic**: Used for data validation and settings management, ensuring type safety and clear data structures.
+*   **`uuid`**: Python's built-in module for generating universally unique identifiers.
 
 ## Installation Instructions
 
-Follow these steps to set up and run the backend service locally:
+Follow these steps to set up and run the Todo API backend service locally:
 
-1. **Clone the repository:**
+1.  **Clone the repository:**
     ```bash
     git clone https://github.com/ArifRahaman/backend_MsK.git
     cd backend_MsK
     ```
 
-2. **Create a virtual environment (recommended):**
+2.  **Create a virtual environment (recommended):**
     ```bash
     python -m venv venv
     source venv/bin/activate  # On Windows use `venv\Scripts\activate`
     ```
 
-3. **Install dependencies:**
-    This project uses `pip` to manage its dependencies. Create a `requirements.txt` file in the root of the project with the following content:
+3.  **Install dependencies:**
+    Create a `requirements.txt` file in the root of your project with the following content:
     ```
     fastapi
     uvicorn
-    python-dotenv
-    pypdf
+    pydantic # Although often a dependency of FastAPI, it's good practice to list explicitly if models are used
     ```
-    Then install them:
+    Then, install the dependencies using pip:
     ```bash
     pip install -r requirements.txt
     ```
-    *(Note: The `rag_logic` module is assumed to be part of this project or provided separately, and any external dependencies it has should also be added to `requirements.txt` if applicable.)*
-
-4. **Create a `.env` file:**
-    In the root directory of the project, create a file named `.env` and configure your environment variables.
 
 ## Usage Guide
 
-To start the FastAPI application, use the following command:
+To run the application and interact with the API:
 
-```bash
-uvicorn index:app --reload
-```
+1.  **Start the API server:**
+    Navigate to the project's root directory in your terminal and run the following command:
+    ```bash
+    uvicorn index:app --reload
+    ```
+    This command starts the Uvicorn server, running your FastAPI application (`app` object from `index.js`). The `--reload` flag enables auto-reloading on code changes, which is useful for development.
 
-This will start the server and the API will be accessible at `http://127.0.0.1:8000`.
+    You should see output indicating that the server is running, typically on `http://127.0.0.1:8000`.
+
+2.  **Access API Documentation:**
+    Once the server is running, you can access the interactive API documentation (Swagger UI) at:
+    `http://127.0.0.1:8000/docs`
+
+    Or ReDoc at:
+    `http://127.0.0.1:8000/redoc`
+
+3.  **Interact with the API (using curl examples):**
+
+    *   **Get a welcome message:**
+        ```bash
+        curl http://127.0.0.1:8000/
+        ```
+        Expected Output:
+        ```json
+        {"message": "Welcome to Random Todo API 🚀"}
+        ```
+
+    *   **Create a new todo:**
+        ```bash
+        curl -X POST \
+             -H "Content-Type: application/json" \
+             -d '{"title": "Learn FastAPI", "description": "Dive deep into FastAPI documentation and examples."}' \
+             http://127.0.0.1:8000/todos
+        ```
+        Expected Output (with a generated `id`):
+        ```json
+        {"title":"Learn FastAPI","description":"Dive deep into FastAPI documentation and examples.","id":"<some-uuid>","completed":false}
+        ```
+        *Note down the `id` from the response for subsequent operations.*
+
+    *   **Create another todo:**
+        ```bash
+        curl -X POST \
+             -H "Content-Type: application/json" \
+             -d '{"title": "Build a simple app"}' \
+             http://127.0.0.1:8000/todos
+        ```
+
+    *   **List all todos:**
+        ```bash
+        curl http://127.0.0.1:8000/todos
+        ```
+        Expected Output:
+        ```json
+        [
+          {"title":"Learn FastAPI","description":"Dive deep into FastAPI documentation and examples.","id":"<first-uuid>","completed":false},
+          {"title":"Build a simple app","description":null,"id":"<second-uuid>","completed":false}
+        ]
+        ```
+
+    *   **Get a specific todo by ID:**
+        (Replace `<todo_id>` with an actual ID from a created todo)
+        ```bash
+        curl http://127.0.0.1:8000/todos/<todo_id>
+        ```
+        Expected Output:
+        ```json
+        {"title":"Learn FastAPI","description":"Dive deep into FastAPI documentation and examples.","id":"<todo_id>","completed":false}
+        ```
+
+    *   **Update a todo by ID:**
+        (Replace `<todo_id>` with an actual ID)
+        ```bash
+        curl -X PUT \
+             -H "Content-Type: application/json" \
+             -d '{"title": "Master FastAPI", "description": "Become an expert in building performant APIs with FastAPI."}' \
+             http://127.0.0.1:8000/todos/<todo_id>
+        ```
+        Expected Output:
+        ```json
+        {"title":"Master FastAPI","description":"Become an expert in building performant APIs with FastAPI.","id":"<todo_id>","completed":false}
+        ```
+
+    *   **Delete a todo by ID:**
+        (Replace `<todo_id>` with an actual ID)
+        ```bash
+        curl -X DELETE http://127.0.0.1:8000/todos/<todo_id>
+        ```
+        Expected Output:
+        ```json
+        {"message": "Todo deleted successfully"}
+        ```
 
 ## Environment Variables
 
-The application uses a `.env` file to manage environment-specific settings. Ensure the following variables are defined:
-
-- `SECRET_KEY`: A secret key for securing the application.
-- Other necessary configuration variables as required by the `rag_logic` module or other services.
+This project currently does not utilize any explicit environment variables configured via a `.env` file. All configurations are handled directly within the `index.js` file.
 
 ## API Reference
 
-### Endpoints
+The following endpoints are available:
 
-#### Root Endpoint
+### `GET /`
 
-- **`GET /`**
-  - **Description**: Returns a welcome message.
-  - **Response**: 
-    - 200: `{"message": "Welcome to Random Todo API 🚀"}`
+*   **Description**: Returns a welcome message.
+*   **Method**: `GET`
+*   **Response**:
+    *   `200 OK`:
+        ```json
+        {"message": "Welcome to Random Todo API 🚀"}
+        ```
 
-#### Todo Endpoints
+### `POST /todos`
 
-- **`POST /todos`**
-  - **Description**: Create a new Todo item.
-  - **Request Body**: 
-    - `title` (string): Title of the todo.
-    - `description` (string, optional): Description of the todo.
-  - **Response**: 
-    - 201: JSON representation of the created Todo.
+*   **Description**: Creates a new todo item.
+*   **Method**: `POST`
+*   **Request Body (`application/json`)**:
+    *   `title` (string, **required**): The title of the todo.
+    *   `description` (string, optional): A longer description of the todo.
+*   **Response**:
+    *   `200 OK`: The newly created todo item, including its generated `id` and `completed` status.
+        ```json
+        {
+          "title": "string",
+          "description": "string | null",
+          "id": "string (uuid)",
+          "completed": false
+        }
+        ```
 
-- **`GET /todos`**
-  - **Description**: List all Todo items.
-  - **Response**: 
-    - 200: List of Todo items.
+### `GET /todos`
 
-- **`GET /todos/{todo_id}`**
-  - **Description**: Get details of a specific Todo item.
-  - **Response**: 
-    - 200: JSON representation of the Todo item.
-    - 404: Todo not found.
+*   **Description**: Retrieves a list of all existing todo items.
+*   **Method**: `GET`
+*   **Response**:
+    *   `200 OK`: A list of todo items.
+        ```json
+        [
+          {
+            "title": "string",
+            "description": "string | null",
+            "id": "string (uuid)",
+            "completed": false
+          }
+        ]
+        ```
 
-- **`PUT /todos/{todo_id}`**
-  - **Description**: Update a specific Todo item.
-  - **Request Body**: 
-    - `title` (string): Updated title of the todo.
-    - `description` (string, optional): Updated description of the todo.
-  - **Response**: 
-    - 200: JSON representation of the updated Todo.
-    - 404: Todo not found.
+### `GET /todos/{todo_id}`
 
-- **`DELETE /todos/{todo_id}`**
-  - **Description**: Delete a specific Todo item.
-  - **Response**: 
-    - 200: Todo deleted successfully.
-    - 404: Todo not found.
+*   **Description**: Retrieves a single todo item by its unique ID.
+*   **Method**: `GET`
+*   **Path Parameters**:
+    *   `todo_id` (string, **required**): The unique identifier of the todo item.
+*   **Response**:
+    *   `200 OK`: The requested todo item.
+        ```json
+        {
+          "title": "string",
+          "description": "string | null",
+          "id": "string (uuid)",
+          "completed": false
+        }
+        ```
+    *   `404 Not Found`: If no todo with the given `todo_id` exists.
+        ```json
+        {"detail": "Todo not found"}
+        ```
+
+### `PUT /todos/{todo_id}`
+
+*   **Description**: Updates an existing todo item identified by its ID.
+*   **Method**: `PUT`
+*   **Path Parameters**:
+    *   `todo_id` (string, **required**): The unique identifier of the todo item to update.
+*   **Request Body (`application/json`)**:
+    *   `title` (string, **required**): The new title for the todo.
+    *   `description` (string, optional): The new description for the todo.
+*   **Response**:
+    *   `200 OK`: The updated todo item.
+        ```json
+        {
+          "title": "string",
+          "description": "string | null",
+          "id": "string (uuid)",
+          "completed": false
+        }
+        ```
+    *   `404 Not Found`: If no todo with the given `todo_id` exists.
+        ```json
+        {"detail": "Todo not found"}
+        ```
+
+### `DELETE /todos/{todo_id}`
+
+*   **Description**: Deletes a todo item by its unique ID.
+*   **Method**: `DELETE`
+*   **Path Parameters**:
+    *   `todo_id` (string, **required**): The unique identifier of the todo item to delete.
+*   **Response**:
+    *   `200 OK`: A confirmation message that the todo was deleted successfully.
+        ```json
+        {"message": "Todo deleted successfully"}
+        ```
+    *   `404 Not Found`: If no todo with the given `todo_id` exists.
+        ```json
+        {"detail": "Todo not found"}
+        ```
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request for any enhancements or bug fixes.
+Contributions are welcome! If you have suggestions for improvements or new features, please feel free to:
+
+1.  Fork the repository.
+2.  Create a new branch (`git checkout -b feature/your-feature-name`).
+3.  Make your changes.
+4.  Commit your changes (`git commit -m 'Add new feature'`).
+5.  Push to the branch (`git push origin feature/your-feature-name`).
+6.  Open a Pull Request.
+
+Please ensure your code adheres to good practices and includes appropriate tests if applicable.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-> 🤖 *Last automated update: 2026-02-22 20:16:31*
+This project is licensed under the MIT License. See the `LICENSE` file (if present) or refer to the repository for full details.
