@@ -59,124 +59,42 @@ Follow these steps to set up and run the backend service locally:
 
 ## Usage Guide
 
-Run the FastAPI application using Uvicorn:
+To run the application, use the following command:
 ```bash
 uvicorn index:app --reload
 ```
 
-Once the server is running, you can interact with the API endpoints as described in the API Reference section.
+This will start the FastAPI server on `http://127.0.0.1:8000`. You can access the API documentation at `http://127.0.0.1:8000/docs`.
 
 ## Environment Variables
 
-The application uses environment variables for configuration. Ensure you have a `.env` file in the root directory with necessary configuration details, such as:
-
-```
-# Example environment variables
-DATABASE_URL=your_database_url
-SECRET_KEY=your_secret_key
-```
+Create a `.env` file in the root directory to manage environment-specific configurations and sensitive information. Example configurations might include API keys or database connection strings.
 
 ## API Reference
 
-### Endpoints
+Here are the main API endpoints provided by this service:
 
-- **GET /**: Welcome message.
-  
-  **Response**: 
-  ```json
-  {
-    "message": "Welcome to Random Todo API 🚀"
-  }
-  ```
-
-- **POST /todos**: Create a new todo item.
-  
-  **Request Body**:
-  ```json
-  {
-    "title": "Sample Todo",
-    "description": "This is a sample todo item"
-  }
-  ```
-
-  **Response**:
-  ```json
-  {
-    "id": "unique-id",
-    "title": "Sample Todo",
-    "description": "This is a sample todo item",
-    "completed": false
-  }
-  ```
-
-- **GET /todos**: List all todo items.
-
-  **Response**:
-  ```json
-  [
-    {
-      "id": "unique-id",
-      "title": "Sample Todo",
-      "description": "This is a sample todo item",
-      "completed": false
-    }
-  ]
-  ```
-
-- **GET /todos/{todo_id}**: Retrieve a specific todo item by ID.
-
-  **Response**:
-  ```json
-  {
-    "id": "unique-id",
-    "title": "Sample Todo",
-    "description": "This is a sample todo item",
-    "completed": false
-  }
-  ```
-
-- **PUT /todos/{todo_id}**: Update a specific todo item by ID.
-
-  **Request Body**:
-  ```json
-  {
-    "title": "Updated Todo",
-    "description": "Updated description"
-  }
-  ```
-
-  **Response**:
-  ```json
-  {
-    "id": "unique-id",
-    "title": "Updated Todo",
-    "description": "Updated description",
-    "completed": false
-  }
-  ```
-
-- **DELETE /todos/{todo_id}**: Delete a specific todo item by ID.
-
-  **Response**:
-  ```json
-  {
-    "message": "Todo deleted successfully"
-  }
-  ```
+- **GET /**: Returns a welcome message.
+- **POST /todos**: Creates a new to-do item.
+- **GET /todos**: Retrieves a list of all to-do items.
+- **GET /todos/{todo_id}**: Retrieves a specific to-do item by ID.
+- **PUT /todos/{todo_id}**: Updates a specific to-do item by ID.
+- **DELETE /todos/{todo_id}**: Deletes a specific to-do item by ID.
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and use a feature branch. Pull requests are warmly welcome.
+Contributions are welcome! Please feel free to submit a Pull Request or open an issue for any bugs or improvements. Follow these steps to contribute:
 
 1. Fork the repository.
-2. Create your feature branch: `git checkout -b my-feature-branch`
-3. Commit your changes: `git commit -m 'Add some feature'`
-4. Push to the branch: `git push origin my-feature-branch`
-5. Submit a pull request.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Make your changes.
+4. Commit your changes (`git commit -am 'Add new feature'`).
+5. Push to the branch (`git push origin feature/YourFeature`).
+6. Open a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the LICENSE file for details.
 
 ---
-> 🤖 *Last automated update: 2026-02-22 20:07:00*
+> 🤖 *Last automated update: 2026-02-22 20:14:55*
