@@ -59,42 +59,75 @@ Follow these steps to set up and run the backend service locally:
 
 ## Usage Guide
 
-To run the application, use the following command:
+To start the FastAPI application, use the following command:
+
 ```bash
 uvicorn index:app --reload
 ```
 
-This will start the FastAPI server on `http://127.0.0.1:8000`. You can access the API documentation at `http://127.0.0.1:8000/docs`.
+This will start the server and the API will be accessible at `http://127.0.0.1:8000`.
 
 ## Environment Variables
 
-Create a `.env` file in the root directory to manage environment-specific configurations and sensitive information. Example configurations might include API keys or database connection strings.
+The application uses a `.env` file to manage environment-specific settings. Ensure the following variables are defined:
+
+- `SECRET_KEY`: A secret key for securing the application.
+- Other necessary configuration variables as required by the `rag_logic` module or other services.
 
 ## API Reference
 
-Here are the main API endpoints provided by this service:
+### Endpoints
 
-- **GET /**: Returns a welcome message.
-- **POST /todos**: Creates a new to-do item.
-- **GET /todos**: Retrieves a list of all to-do items.
-- **GET /todos/{todo_id}**: Retrieves a specific to-do item by ID.
-- **PUT /todos/{todo_id}**: Updates a specific to-do item by ID.
-- **DELETE /todos/{todo_id}**: Deletes a specific to-do item by ID.
+#### Root Endpoint
+
+- **`GET /`**
+  - **Description**: Returns a welcome message.
+  - **Response**: 
+    - 200: `{"message": "Welcome to Random Todo API 🚀"}`
+
+#### Todo Endpoints
+
+- **`POST /todos`**
+  - **Description**: Create a new Todo item.
+  - **Request Body**: 
+    - `title` (string): Title of the todo.
+    - `description` (string, optional): Description of the todo.
+  - **Response**: 
+    - 201: JSON representation of the created Todo.
+
+- **`GET /todos`**
+  - **Description**: List all Todo items.
+  - **Response**: 
+    - 200: List of Todo items.
+
+- **`GET /todos/{todo_id}`**
+  - **Description**: Get details of a specific Todo item.
+  - **Response**: 
+    - 200: JSON representation of the Todo item.
+    - 404: Todo not found.
+
+- **`PUT /todos/{todo_id}`**
+  - **Description**: Update a specific Todo item.
+  - **Request Body**: 
+    - `title` (string): Updated title of the todo.
+    - `description` (string, optional): Updated description of the todo.
+  - **Response**: 
+    - 200: JSON representation of the updated Todo.
+    - 404: Todo not found.
+
+- **`DELETE /todos/{todo_id}`**
+  - **Description**: Delete a specific Todo item.
+  - **Response**: 
+    - 200: Todo deleted successfully.
+    - 404: Todo not found.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request or open an issue for any bugs or improvements. Follow these steps to contribute:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/YourFeature`).
-3. Make your changes.
-4. Commit your changes (`git commit -am 'Add new feature'`).
-5. Push to the branch (`git push origin feature/YourFeature`).
-6. Open a Pull Request.
+Contributions are welcome! Please fork the repository and submit a pull request for any enhancements or bug fixes.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
-> 🤖 *Last automated update: 2026-02-22 20:14:55*
+> 🤖 *Last automated update: 2026-02-22 20:16:31*
