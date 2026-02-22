@@ -6,7 +6,7 @@ from fastapi import FastAPI, UploadFile, File, BackgroundTasks, HTTPException
 from pypdf import PdfReader
 from dotenv import load_dotenv
 
-## Import the Ensemble Logic we just created
+# Import the Ensemble Logic we just created
 import rag_logic
 
 # --- SETUP ---
