@@ -11,7 +11,7 @@ AZURE_CLIENT_SECRET = ""
 AZURE_OPENAI_ENDPOINT = "/"
 AZURE_OPENAI_API_VERSION = ""
 AZURE_OPENAI_EMBEDDING_DEPLOYMENT = ""  # e.g., text-embedding-3-large
-AZURE_OPENAI_CHATGPT_DEPLOYMENT = ""
+AZURE_OPENAI_CHATGPT_DEPLOYMENT = "" ;
 
 # ---------- Get AAD Token ----------
 credential = ClientSecretCredential(
