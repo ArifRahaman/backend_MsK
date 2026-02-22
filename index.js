@@ -6,10 +6,10 @@ const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-dotenv.config();
 
 
-// Use the CORS middleware with options
+
+
 
 const app = express();
 const corsOptions = {
