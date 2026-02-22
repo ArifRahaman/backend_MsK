@@ -5,7 +5,7 @@ import uuid
 
 app = FastAPI(title="Random Todo API")
 
-# In-memory DB
+
 todos = {}
 
 class TodoCreate(BaseModel):
