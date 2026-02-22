@@ -50,7 +50,7 @@ def update_todo(todo_id: str, updated: TodoCreate):
     todos[todo_id].description = updated.description
     return todos[todo_id]
 
-
+#
 @app.delete("/todos/{todo_id}")
 def delete_todo(todo_id: str):
     if todo_id not in todos:
