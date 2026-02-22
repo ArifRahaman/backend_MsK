@@ -1,6 +1,6 @@
 
 import logging
-from pathlib import Path
+from pathlib import 
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks, HTTPException
 from pypdf import PdfReader
 from dotenv import load_dotenv
