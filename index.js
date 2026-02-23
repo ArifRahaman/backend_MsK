@@ -56,5 +56,5 @@ def delete_todo(todo_id: str):
     if todo_id not in todos:
         raise HTTPException(status_code=404, detail="Todo not found")
     
-    return {"message": "Todo deleted successfully"}
+   
 
