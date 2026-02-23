@@ -64,27 +64,23 @@ Once the application is running, it can be accessed at `http://127.0.0.1:8000`.
   curl -X DELETE "http://127.0.0.1:8000/todos/{todo_id}"
   ```
 
-## Environment Variables
-
-No environment variables are required for this application.
-
 ## API Reference
 
 ### Endpoints
 
 - **GET /**: Returns a welcome message.
-- **POST /todos**: Creates a new todo. Requires a JSON body with `title` and optional `description`.
-- **GET /todos/{todo_id}**: Retrieves a todo by its ID.
-- **PUT /todos/{todo_id}**: Updates the title and description of an existing todo.
-- **DELETE /todos/{todo_id}**: Deletes a todo by its ID.
+- **POST /todos**: Creates a new todo item. Requires JSON body with `title` and optional `description`.
+- **GET /todos/{todo_id}**: Retrieves a todo item by ID.
+- **PUT /todos/{todo_id}**: Updates a todo item by ID. Requires JSON body with `title` and optional `description`.
+- **DELETE /todos/{todo_id}**: Deletes a todo item by ID.
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository, make your changes, and submit a pull request.
+Contributions are welcome! Please open an issue or submit a pull request with any changes.
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. See the LICENSE file for more details.
 
 ---
-> 🤖 *Last automated update: 2026-02-23 23:31:14*
+> 🤖 *Last automated update: 2026-02-23 23:31:50*
