@@ -55,6 +55,6 @@ def update_todo(todo_id: str, updated: TodoCreate):
 def delete_todo(todo_id: str):
     if todo_id not in todos:
         raise HTTPException(status_code=404, detail="Todo not found")
-    print("Arif R");
+    
     return {"message": "Todo deleted successfully"}
 
