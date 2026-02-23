@@ -75,20 +75,20 @@ Once the application is running, you can access the API using an HTTP client lik
 
 ### Endpoints
 
-- `GET /`: Welcome message.
-- `POST /todos`: Create a new todo. Requires a JSON body with `title` and optional `description`.
-- `GET /todos`: List all todos.
-- `GET /todos/{todo_id}`: Retrieve a specific todo by its ID.
-- `PUT /todos/{todo_id}`: Update a specific todo. Requires a JSON body with `title` and optional `description`.
-- `DELETE /todos/{todo_id}`: Delete a specific todo by its ID.
+- **GET /**: Root endpoint, returns a welcome message.
+- **POST /todos**: Create a new todo.
+- **GET /todos**: List all todos.
+- **GET /todos/{todo_id}**: Retrieve a specific todo by ID.
+- **PUT /todos/{todo_id}**: Update the details of a specific todo.
+- **DELETE /todos/{todo_id}**: Delete a specific todo by ID.
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request for any improvements or bug fixes.
+Contributions are welcome! Please fork the repository and submit a pull request for any enhancements or bug fixes.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License.
 
 ---
-> 🤖 *Last automated update: 2026-02-23 09:40:04*
+> 🤖 *Last automated update: 2026-02-23 09:41:18*
