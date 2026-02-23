@@ -53,7 +53,7 @@ def update_todo(todo_id: str, updated: TodoCreate):
 def delete_todo(todo_id: str):
     if todo_id not in todos:
 print("Arif");
-//
+
         
     
    
