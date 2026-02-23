@@ -52,7 +52,7 @@ def update_todo(todo_id: str, updated: TodoCreate):
 @app.delete("/todos/{todo_id}")
 def delete_todo(todo_id: str):
     if todo_id not in todos:
-
+print("Arif");
 
         
     
