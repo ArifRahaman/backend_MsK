@@ -1,6 +1,6 @@
 # Random Todo API
 
-Welcome to the Random Todo API! This API allows users to manage a list of todos with functionalities to create, read, update, and delete todo items. It's built with FastAPI, providing a simple and efficient way to manage tasks.
+Welcome to the Random Todo API! This API enables users to efficiently manage a list of todos with capabilities to create, read, update, and delete todo items using FastAPI.
 
 ## Features
 
@@ -59,7 +59,7 @@ Once the server is running, you can interact with the API using HTTP requests. B
   curl -X GET "http://127.0.0.1:8000/todos"
   ```
 
-- **Get a Specific Todo:**
+- **Get a Todo by ID:**
 
   ```bash
   curl -X GET "http://127.0.0.1:8000/todos/{todo_id}"
@@ -68,7 +68,7 @@ Once the server is running, you can interact with the API using HTTP requests. B
 - **Update a Todo:**
 
   ```bash
-  curl -X PUT "http://127.0.0.1:8000/todos/{todo_id}" -H "Content-Type: application/json" -d '{"title": "Updated Todo", "description": "Updated description."}'
+  curl -X PUT "http://127.0.0.1:8000/todos/{todo_id}" -H "Content-Type: application/json" -d '{"title": "Updated Todo", "description": "This is an updated description."}'
   ```
 
 - **Delete a Todo:**
@@ -79,22 +79,20 @@ Once the server is running, you can interact with the API using HTTP requests. B
 
 ## API Reference
 
-### Endpoints
-
-- `GET /`: Returns a welcome message.
-- `POST /todos`: Creates a new todo.
-- `GET /todos`: Lists all todos.
-- `GET /todos/{todo_id}`: Retrieves a specific todo by ID.
-- `PUT /todos/{todo_id}`: Updates an existing todo.
-- `DELETE /todos/{todo_id}`: Deletes a todo.
+- **GET /**: Returns a welcome message.
+- **POST /todos**: Creates a new todo item.
+- **GET /todos**: Lists all todo items.
+- **GET /todos/{todo_id}**: Retrieves a specific todo item by its ID.
+- **PUT /todos/{todo_id}**: Updates an existing todo item.
+- **DELETE /todos/{todo_id}**: Deletes a todo item.
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request for any enhancements or bug fixes.
+Contributions are welcome! Please fork the repository and submit a pull request for any features, bug fixes, or improvements.
 
 ## License
 
-This project is open-source and available under the MIT License.
+This project is licensed under the MIT License.
 
 ---
-> 🤖 *Last automated update: 2026-02-23 16:29:19*
+> 🤖 *Last automated update: 2026-02-23 16:30:27*
