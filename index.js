@@ -5,7 +5,7 @@ import uuid
 
 app = FastAPI(title="Random Todo API")
 
-
+print(1+1);
 todos = {}
 
 class TodoCreate(BaseModel):
