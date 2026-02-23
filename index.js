@@ -30,9 +30,9 @@ def create_todo(todo: TodoCreate):
     return new_todo
 
 
-@app.get("/todos", response_model=List[Todo])
-def list_todos():
-    return list(todos.values())
+// @app.get("/todos", response_model=List[Todo])
+// def list_todos():
+//     return list(todos.values())
 
 
 @app.get("/todos/{todo_id}", response_model=Todo)
