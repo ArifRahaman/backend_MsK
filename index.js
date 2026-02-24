@@ -9,7 +9,7 @@ app = FastAPI(
 )
 
 
-# Useful for testing if your server is running or for load balancers
+
 @app.get("/")
 async def root():
     return {
