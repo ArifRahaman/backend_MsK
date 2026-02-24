@@ -1,19 +1,19 @@
 # Random Todo API
 
-Welcome to the Random Todo API, a simple RESTful API built with FastAPI for managing todo tasks. The API allows you to create, read, update, and delete todo items.
+Welcome to the Random Todo API! This project is a simple FastAPI application that allows users to create and manage todo items. Whether you're building a productivity app or just experimenting with APIs, this project provides a basic foundation for handling todo tasks.
 
 ## Features
 
 - **Create Todo**: Add new todo items with a title and optional description.
-- **Read Todos**: Retrieve a specific todo item by its ID.
-- **Update Todo**: Modify the title and description of an existing todo item.
-- **Delete Todo**: Remove a todo item by its ID.
+- **Retrieve Todo**: Fetch details of a specific todo item using its unique ID.
+- **Welcome Message**: Access a root endpoint that welcomes you to the API.
 
 ## Tech Stack
 
-- **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python 3.7+.
-- **Pydantic**: Data validation and settings management using Python type annotations.
-- **UUID**: For generating unique identifiers for todo items.
+- **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python.
+- **Python**: The programming language used for developing this application.
+- **UUID**: Utilized for generating unique identifiers for todo items.
+- **Pydantic**: Used for data validation and settings management.
 
 ## Installation Instructions
 
@@ -24,104 +24,67 @@ Welcome to the Random Todo API, a simple RESTful API built with FastAPI for mana
    ```
 
 2. **Install dependencies**:
-   Ensure you have Python 3.7+ installed, then run:
+   Ensure you have Python and pip installed. Then run:
    ```bash
    pip install fastapi uvicorn pydantic
    ```
 
-## Usage Guide
-
-1. **Run the server**:
-   Use Uvicorn to start the FastAPI server:
+3. **Run the application**:
+   Use Uvicorn to serve the FastAPI application:
    ```bash
    uvicorn index:app --reload
    ```
 
-2. **Access the API**:
-   Open your browser or API client and navigate to `http://127.0.0.1:8000` to view the API documentation and test endpoints.
+## Usage Guide
+
+To interact with the Random Todo API, follow these examples:
+
+- **Welcome Message**: 
+  - Endpoint: `GET /`
+  - Example: Open a browser and navigate to `http://127.0.0.1:8000/` to see the welcome message.
+
+- **Create Todo**:
+  - Endpoint: `POST /todos`
+  - Example:
+    ```json
+    {
+      "title": "Buy groceries",
+      "description": "Milk, Bread, Eggs"
+    }
+    ```
+  - Use a tool like Postman or `curl` to send a POST request with the above JSON payload to `http://127.0.0.1:8000/todos`.
+
+- **Get Todo**:
+  - Endpoint: `GET /todos/{todo_id}`
+  - Example: Replace `{todo_id}` with the actual ID of the todo you want to retrieve. Send a GET request to `http://127.0.0.1:8000/todos/{todo_id}`.
 
 ## API Reference
 
-### Get Welcome Message
+### Endpoints
 
-- **Endpoint**: `/`
-- **Method**: GET
-- **Response**:
-  ```json
-  {
-    "message": "Welcome to Random Todo API 🚀"
-  }
-  ```
+- **Root Endpoint**
+  - `GET /`
+  - **Response**: `{ "message": "Welcome to Random Todo API 🚀" }`
 
-### Create Todo
+- **Create Todo**
+  - `POST /todos`
+  - **Request Body**: 
+    - `title`: `str` (required)
+    - `description`: `str` (optional)
+  - **Response**: Todo object with `id`, `title`, `description`, and `completed` status.
 
-- **Endpoint**: `/todos`
-- **Method**: POST
-- **Request Body**:
-  ```json
-  {
-    "title": "Your todo title",
-    "description": "Optional description"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "id": "Unique ID",
-    "title": "Your todo title",
-    "description": "Optional description",
-    "completed": false
-  }
-  ```
-
-### Get Todo
-
-- **Endpoint**: `/todos/{todo_id}`
-- **Method**: GET
-- **Response**:
-  ```json
-  {
-    "id": "Unique ID",
-    "title": "Existing todo title",
-    "description": "Existing description",
-    "completed": false
-  }
-  ```
-
-### Update Todo
-
-- **Endpoint**: `/todos/{todo_id}`
-- **Method**: PUT
-- **Request Body**:
-  ```json
-  {
-    "title": "Updated title",
-    "description": "Updated description"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "id": "Unique ID",
-    "title": "Updated title",
-    "description": "Updated description",
-    "completed": false
-  }
-  ```
-
-### Delete Todo
-
-- **Endpoint**: `/todos/{todo_id}`
-- **Method**: DELETE
-- **Response**: `204 No Content` on successful deletion
+- **Get Todo**
+  - `GET /todos/{todo_id}`
+  - **Path Parameter**: `todo_id`: `str` (required)
+  - **Response**: Todo object
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request with your changes.
+Contributions are welcome! If you have ideas for improvements or additional features, feel free to fork the repository and submit a pull request. Make sure to follow the project's coding guidelines.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ---
-> 🤖 *Last automated update: 2026-02-24 16:06:23*
+> 🤖 *Last automated update: 2026-02-24 16:07:09*
