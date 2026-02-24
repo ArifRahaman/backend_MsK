@@ -1,102 +1,103 @@
-# Random Todo API
+# GitHub Webhook API
 
-Welcome to the Random Todo API, a simple yet efficient backend service for managing todo tasks. This API allows users to create, retrieve, update, and manage todo items in a straightforward manner.
+An automated documentation generator service.
 
 ## Features
 
-- **Create a Todo**: Add new todo items with a title and optional description.
-- **Read All Todos**: Retrieve a list of all todos.
-- **Read a Single Todo**: Fetch details of a specific todo using its ID.
-- **Update a Todo**: Modify existing todo details such as title, description, and completion status.
+- Initialize a FastAPI server for handling GitHub webhooks.
+- Endpoint to check server status.
+- Endpoint to process GitHub webhook payloads.
 
 ## Tech Stack
 
-- **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python 3.7+.
-- **Pydantic**: Data validation and settings management using Python type annotations.
+- Python
+- FastAPI
+- Uvicorn
 
 ## Installation Instructions
 
-1. Clone the repository:
+1. **Clone the repository**
+
    ```bash
    git clone https://github.com/ArifRahaman/backend_MsK.git
    cd backend_MsK
    ```
 
-2. Install the required dependencies:
+2. **Create a virtual environment and activate it**
+
    ```bash
-   pip install fastapi uvicorn pydantic
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   ```
+
+3. **Install the dependencies**
+
+   ```bash
+   pip install fastapi uvicorn
    ```
 
 ## Usage Guide
 
-To start the FastAPI server, run the following command:
+1. **Running the Server**
 
-```bash
-uvicorn index:app --reload
-```
+   Start the FastAPI server using Uvicorn:
 
-Once the server is running, you can interact with the API using any HTTP client or tool like `curl`, `Postman`, etc.
+   ```bash
+   uvicorn index:app --host 0.0.0.0 --port 8000 --reload
+   ```
 
-### Examples
+2. **Check Server Status**
 
-- **Create a Todo**:
-  ```bash
-  curl -X POST "http://127.0.0.1:8000/todos" -H "Content-Type: application/json" -d '{"title": "Sample Todo", "description": "This is a sample todo item"}'
-  ```
+   Access the root endpoint to verify the server is running:
 
-- **Retrieve All Todos**:
-  ```bash
-  curl "http://127.0.0.1:8000/todos"
-  ```
+   ```bash
+   curl http://localhost:8000/
+   ```
 
-- **Retrieve a Specific Todo**:
-  ```bash
-  curl "http://127.0.0.1:8000/todos/{todo_id}"
-  ```
+   Expected response:
 
-- **Update a Todo**:
-  ```bash
-  curl -X PUT "http://127.0.0.1:8000/todos/{todo_id}" -H "Content-Type: application/json" -d '{"completed": true}'
-  ```
+   ```json
+   {
+     "status": "online",
+     "message": "DocuGenius Webhook Server is running!"
+   }
+   ```
 
-## Environment Variables
+3. **Process GitHub Webhook**
 
-There are no specific environment variables required for this project.
+   Send a POST request to the webhook endpoint:
+
+   ```bash
+   curl -X POST http://localhost:8000/webhook/github -H "Content-Type: application/json" -d '{"repository": {"full_name": "example/repo"}}'
+   ```
+
+   Expected response:
+
+   ```json
+   {
+     "status": "processing",
+     "repository": "example/repo",
+     "message": "Webhook payload received successfully."
+   }
+   ```
 
 ## API Reference
 
-- **GET /**: Welcome message.
-- **POST /todos**: Create a new todo.
-  - Request Body:
-    - `title`: str (required)
-    - `description`: str (optional)
-- **GET /todos**: Retrieve all todos.
-- **GET /todos/{todo_id}**: Retrieve a specific todo by ID.
-- **PUT /todos/{todo_id}**: Update an existing todo.
-  - Request Body:
-    - `title`: str (optional)
-    - `description`: str (optional)
-    - `completed`: bool (optional)
-- **POST /webhook/github**: Receive GitHub webhook payloads.
-  - Request Body: JSON payload from GitHub webhook.
-  - Response:
-    - `status`: str
-    - `repository`: str
-    - `message`: str
+### Endpoints
+
+- `GET /`  
+  Returns the status of the server.
+
+- `POST /webhook/github`  
+  Processes the incoming webhook payload from GitHub. Returns the status of processing and the repository name.
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request for review.
+Contributions are welcome! Please submit a pull request or open an issue to discuss improvements or bug fixes.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for more information.
+This project is licensed under the MIT License.
 
 ---
-
-## Recent Updates
-
-- **2026-02-24**: Added a new endpoint `POST /webhook/github` to handle GitHub webhook payloads.
-
----
-> 🤖 *Last automated update: 2026-02-24 16:31:31*
+> 🤖 *Last automated update: 2026-02-24 16:33:34*
