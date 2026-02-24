@@ -22,7 +22,7 @@ class Todo(TodoCreate):
     id: str
     completed: bool = False
 
-# --- Endpoints ---
+#
 
 @app.get("/")
 def root():
