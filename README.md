@@ -1,90 +1,110 @@
 # Random Todo API
 
-Welcome to the Random Todo API! This project is a simple FastAPI application that allows users to create and manage todo items. Whether you're building a productivity app or just experimenting with APIs, this project provides a basic foundation for handling todo tasks.
+Welcome to the Random Todo API! This project provides a simple backend service for managing todo items. Developed using FastAPI, it allows users to create and manage todo tasks effectively.
 
 ## Features
 
-- **Create Todo**: Add new todo items with a title and optional description.
-- **Retrieve Todo**: Fetch details of a specific todo item using its unique ID.
-- **Welcome Message**: Access a root endpoint that welcomes you to the API.
+- **Create New Todo**: Add new todo items with a title and optional description.
+- **Welcome Message**: A root endpoint that returns a welcome message.
 
 ## Tech Stack
 
-- **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python.
-- **Python**: The programming language used for developing this application.
-- **UUID**: Utilized for generating unique identifiers for todo items.
-- **Pydantic**: Used for data validation and settings management.
+- **Python**: The programming language used for development.
+- **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python 3.6+.
+- **Pydantic**: For data validation and settings management using Python type annotations.
 
 ## Installation Instructions
 
-1. **Clone the repository**:
+1. Clone the repository:
+
    ```bash
    git clone https://github.com/ArifRahaman/backend_MsK.git
    cd backend_MsK
    ```
 
-2. **Install dependencies**:
-   Ensure you have Python and pip installed. Then run:
+2. Install the required packages:
+
    ```bash
-   pip install fastapi uvicorn pydantic
+   pip install fastapi pydantic uvicorn
    ```
 
-3. **Run the application**:
-   Use Uvicorn to serve the FastAPI application:
+3. Run the application:
+
    ```bash
    uvicorn index:app --reload
    ```
 
 ## Usage Guide
 
-To interact with the Random Todo API, follow these examples:
+Once the server is running, you can interact with it using HTTP requests. Below are some examples:
 
-- **Welcome Message**: 
-  - Endpoint: `GET /`
-  - Example: Open a browser and navigate to `http://127.0.0.1:8000/` to see the welcome message.
+### Welcome Message
 
-- **Create Todo**:
-  - Endpoint: `POST /todos`
-  - Example:
-    ```json
-    {
-      "title": "Buy groceries",
-      "description": "Milk, Bread, Eggs"
-    }
-    ```
-  - Use a tool like Postman or `curl` to send a POST request with the above JSON payload to `http://127.0.0.1:8000/todos`.
+- **Endpoint**: `GET /`
+- **Description**: Returns a welcome message.
 
-- **Get Todo**:
-  - Endpoint: `GET /todos/{todo_id}`
-  - Example: Replace `{todo_id}` with the actual ID of the todo you want to retrieve. Send a GET request to `http://127.0.0.1:8000/todos/{todo_id}`.
+**Example Request**:
+
+```bash
+curl -X GET "http://127.0.0.1:8000/"
+```
+
+**Example Response**:
+
+```json
+{
+  "message": "Welcome to Random Todo API 🚀"
+}
+```
+
+### Create a Todo
+
+- **Endpoint**: `POST /todos`
+- **Description**: Create a new todo item.
+
+**Example Request**:
+
+```bash
+curl -X POST "http://127.0.0.1:8000/todos" -H "Content-Type: application/json" -d '{"title": "Buy groceries", "description": "Milk, Bread, Cheese"}'
+```
+
+**Example Response**:
+
+```json
+{
+  "id": "unique-todo-id",
+  "title": "Buy groceries",
+  "description": "Milk, Bread, Cheese",
+  "completed": false
+}
+```
+
+## Environment Variables
+
+No environment variables are required for this project.
 
 ## API Reference
 
-### Endpoints
+### GET /
 
-- **Root Endpoint**
-  - `GET /`
-  - **Response**: `{ "message": "Welcome to Random Todo API 🚀" }`
+- **Description**: Returns a welcome message.
+- **Response**: JSON object with a welcome message.
 
-- **Create Todo**
-  - `POST /todos`
-  - **Request Body**: 
-    - `title`: `str` (required)
-    - `description`: `str` (optional)
-  - **Response**: Todo object with `id`, `title`, `description`, and `completed` status.
+### POST /todos
 
-- **Get Todo**
-  - `GET /todos/{todo_id}`
-  - **Path Parameter**: `todo_id`: `str` (required)
-  - **Response**: Todo object
+- **Description**: Create a new todo item.
+- **Request Body**: JSON object with the following fields:
+  - `title`: (string) The title of the todo item.
+  - `description`: (string, optional) A description of the todo item.
+- **Response**: JSON object representing the created todo item.
 
 ## Contributing
 
-Contributions are welcome! If you have ideas for improvements or additional features, feel free to fork the repository and submit a pull request. Make sure to follow the project's coding guidelines.
+Contributions are welcome! Please fork the repository and submit a pull request for any features or bug fixes.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+This project is licensed under the MIT License. See the LICENSE file for more details.
 
 ---
-> 🤖 *Last automated update: 2026-02-24 16:07:09*
+> 🤖 *Last automated update: 2026-02-24 16:07:35*
