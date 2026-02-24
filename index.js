@@ -16,7 +16,7 @@ class Todo(TodoCreate):
     id: str
     completed: bool = False
 
-
+print("Hello")
 @app.get("/")
 def root():
     return {"message": "Welcome to Random Todo API 🚀"}
