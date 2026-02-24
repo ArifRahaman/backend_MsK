@@ -77,6 +77,12 @@ There are no specific environment variables required for this project.
     - `title`: str (optional)
     - `description`: str (optional)
     - `completed`: bool (optional)
+- **POST /webhook/github**: Receive GitHub webhook payloads.
+  - Request Body: JSON payload from GitHub webhook.
+  - Response:
+    - `status`: str
+    - `repository`: str
+    - `message`: str
 
 ## Contributing
 
@@ -87,4 +93,10 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 This project is licensed under the MIT License. See the LICENSE file for more information.
 
 ---
-> 🤖 *Last automated update: 2026-02-24 16:09:58*
+
+## Recent Updates
+
+- **2026-02-24**: Added a new endpoint `POST /webhook/github` to handle GitHub webhook payloads.
+
+---
+> 🤖 *Last automated update: 2026-02-24 16:31:31*
