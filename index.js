@@ -8,7 +8,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# 2. Basic Health Check Endpoint
+
 # Useful for testing if your server is running or for load balancers
 @app.get("/")
 async def root():
@@ -37,7 +37,6 @@ async def github_webhook(request: Request, background_tasks: BackgroundTasks):
         return {"status": "error", "message": str(e)}
 
 
-#
 if __name__ == "__main__":
     print("Starting development server...")
     # 'index:app' refers to the filename (index.py) and the FastAPI instance (app)
