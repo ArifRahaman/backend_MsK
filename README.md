@@ -1,110 +1,90 @@
 # Random Todo API
 
-Welcome to the Random Todo API! This project provides a simple backend service for managing todo items. Developed using FastAPI, it allows users to create and manage todo tasks effectively.
+Welcome to the Random Todo API, a simple yet efficient backend service for managing todo tasks. This API allows users to create, retrieve, update, and manage todo items in a straightforward manner.
 
 ## Features
 
-- **Create New Todo**: Add new todo items with a title and optional description.
-- **Welcome Message**: A root endpoint that returns a welcome message.
+- **Create a Todo**: Add new todo items with a title and optional description.
+- **Read All Todos**: Retrieve a list of all todos.
+- **Read a Single Todo**: Fetch details of a specific todo using its ID.
+- **Update a Todo**: Modify existing todo details such as title, description, and completion status.
 
 ## Tech Stack
 
-- **Python**: The programming language used for development.
-- **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python 3.6+.
-- **Pydantic**: For data validation and settings management using Python type annotations.
+- **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python 3.7+.
+- **Pydantic**: Data validation and settings management using Python type annotations.
 
 ## Installation Instructions
 
 1. Clone the repository:
-
    ```bash
    git clone https://github.com/ArifRahaman/backend_MsK.git
    cd backend_MsK
    ```
 
-2. Install the required packages:
-
+2. Install the required dependencies:
    ```bash
-   pip install fastapi pydantic uvicorn
-   ```
-
-3. Run the application:
-
-   ```bash
-   uvicorn index:app --reload
+   pip install fastapi uvicorn pydantic
    ```
 
 ## Usage Guide
 
-Once the server is running, you can interact with it using HTTP requests. Below are some examples:
-
-### Welcome Message
-
-- **Endpoint**: `GET /`
-- **Description**: Returns a welcome message.
-
-**Example Request**:
+To start the FastAPI server, run the following command:
 
 ```bash
-curl -X GET "http://127.0.0.1:8000/"
+uvicorn index:app --reload
 ```
 
-**Example Response**:
+Once the server is running, you can interact with the API using any HTTP client or tool like `curl`, `Postman`, etc.
 
-```json
-{
-  "message": "Welcome to Random Todo API 🚀"
-}
-```
+### Examples
 
-### Create a Todo
+- **Create a Todo**:
+  ```bash
+  curl -X POST "http://127.0.0.1:8000/todos" -H "Content-Type: application/json" -d '{"title": "Sample Todo", "description": "This is a sample todo item"}'
+  ```
 
-- **Endpoint**: `POST /todos`
-- **Description**: Create a new todo item.
+- **Retrieve All Todos**:
+  ```bash
+  curl "http://127.0.0.1:8000/todos"
+  ```
 
-**Example Request**:
+- **Retrieve a Specific Todo**:
+  ```bash
+  curl "http://127.0.0.1:8000/todos/{todo_id}"
+  ```
 
-```bash
-curl -X POST "http://127.0.0.1:8000/todos" -H "Content-Type: application/json" -d '{"title": "Buy groceries", "description": "Milk, Bread, Cheese"}'
-```
-
-**Example Response**:
-
-```json
-{
-  "id": "unique-todo-id",
-  "title": "Buy groceries",
-  "description": "Milk, Bread, Cheese",
-  "completed": false
-}
-```
+- **Update a Todo**:
+  ```bash
+  curl -X PUT "http://127.0.0.1:8000/todos/{todo_id}" -H "Content-Type: application/json" -d '{"completed": true}'
+  ```
 
 ## Environment Variables
 
-No environment variables are required for this project.
+There are no specific environment variables required for this project.
 
 ## API Reference
 
-### GET /
-
-- **Description**: Returns a welcome message.
-- **Response**: JSON object with a welcome message.
-
-### POST /todos
-
-- **Description**: Create a new todo item.
-- **Request Body**: JSON object with the following fields:
-  - `title`: (string) The title of the todo item.
-  - `description`: (string, optional) A description of the todo item.
-- **Response**: JSON object representing the created todo item.
+- **GET /**: Welcome message.
+- **POST /todos**: Create a new todo.
+  - Request Body:
+    - `title`: str (required)
+    - `description`: str (optional)
+- **GET /todos**: Retrieve all todos.
+- **GET /todos/{todo_id}**: Retrieve a specific todo by ID.
+- **PUT /todos/{todo_id}**: Update an existing todo.
+  - Request Body:
+    - `title`: str (optional)
+    - `description`: str (optional)
+    - `completed`: bool (optional)
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request for any features or bug fixes.
+Contributions are welcome! Please fork the repository and submit a pull request for review.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+This project is licensed under the MIT License. See the LICENSE file for more information.
 
 ---
-> 🤖 *Last automated update: 2026-02-24 16:07:35*
+> 🤖 *Last automated update: 2026-02-24 16:09:58*
