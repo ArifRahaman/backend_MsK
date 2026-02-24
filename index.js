@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, Request, BackgroundTasks
 
-# 1. Initialize the FastAPI application
+
 app = FastAPI(
     title="GitHub Webhook API",
     description="An automated documentation generator service.",
