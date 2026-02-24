@@ -39,5 +39,5 @@ async def github_webhook(request: Request, background_tasks: BackgroundTasks):
 
 if __name__ == "__main__":
     print("Starting development server...")
-    # 'index:app' refers to the filename (index.py) and the FastAPI instance (app)
+    
     uvicorn.run("index:app", host="0.0.0.0", port=8000, reload=True)
