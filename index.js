@@ -36,8 +36,8 @@ async def github_webhook(request: Request, background_tasks: BackgroundTasks):
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
-# 4. Local Server Runner
-# This allows you to run the file directly via `python index.py`
+
+# This allows you to run the file directly via `python index.py` Ok
 if __name__ == "__main__":
     print("Starting development server...")
     # 'index:app' refers to the filename (index.py) and the FastAPI instance (app)
