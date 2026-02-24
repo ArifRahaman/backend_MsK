@@ -17,7 +17,7 @@ async def root():
         "message": "DocuGenius Webhook Server is running!"
     }
 
-# 3. Your Webhook Endpoint (Placeholder for our previous logic)
+
 @app.post("/webhook/github")
 async def github_webhook(request: Request, background_tasks: BackgroundTasks):
     try:
