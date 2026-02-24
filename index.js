@@ -39,18 +39,9 @@ def get_todo(todo_id: str):
     return todos[todo_id]
 
 
-@app.put("/todos/{todo_id}", response_model=Todo)
-def update_todo(todo_id: str, updated: TodoCreate):
-    if todo_id not in todos:
-        raise HTTPException(status_code=404, detail="Todo not found")
-    todos[todo_id].title = updated.title
-    todos[todo_id].description = updated.description
-    return todos[todo_id]
 
 
-@app.delete("/todos/{todo_id}")
-def delete_todo(todo_id: str):
-    if todo_id not in todos:
+
 
 
 
