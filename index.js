@@ -32,11 +32,6 @@ def create_todo(todo: TodoCreate):
 
 
 
-@app.get("/todos/{todo_id}", response_model=Todo)
-def get_todo(todo_id: str):
-    if todo_id not in todos:
-        raise HTTPException(status_code=404, detail="Todo not found")
-    return todos[todo_id]
 
 
 
