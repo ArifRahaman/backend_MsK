@@ -5,7 +5,7 @@ import uuid
 
 app = FastAPI(title="Random Todo API")
 
-# In-memory database
+
 todos = {}
 
 # --- Pydantic Models ---
