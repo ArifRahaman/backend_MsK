@@ -40,4 +40,4 @@ async def github_webhook(request: Request, background_tasks: BackgroundTasks):
 if __name__ == "__main__":
     print("Starting development server...")
     
-    uvicorn.run("index:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("index:app", host="0.0.0.0", port=8001, reload=True)
